@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms Infusionsoft Add-On
 Plugin URI: http://www.seodenver.com
 Description: Integrates Gravity Forms with Infusionsoft allowing form submissions to be automatically sent to your Infusionsoft account
-Version: 1.5.4.2
+Version: 1.5.5
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
 
@@ -622,6 +622,7 @@ EOD;
         if(isset($_REQUEST['cache'])) {
             delete_site_transient('gf_infusionsoft_default_fields');
             delete_site_transient('gf_infusionsoft_custom_fields');
+            delete_site_transient( 'gf_infusionsoft_tag_list'); //since 1.5.5
         }
         ?>
         <style type="text/css">
@@ -1319,27 +1320,59 @@ EOD;
 
         return $lists;
     }
+	
+	
+	
+	/**
+	 * get_tag_list function.
+	 * since 1.5.5
+	 * 
+	 * @access public
+	 * @static
+	 * @return array
+	 */
+	static function get_tag_list() {
 
-    static function get_tag_list() {
+		if( false === ( $lists = get_site_transient( 'gf_infusionsoft_tag_list' ) ) ) {
+			$page = 0;
+			$lists = array();
+			
+			for( $page = 0; $page <= 2; $page++ ) {
+			
+				$contactGroups = Infusionsoft_DataService::query( new Infusionsoft_ContactGroup(), array('Id' => '%'), 1000, $page );
+				
+				if( !empty( $contactGroups ) ) {
+					foreach( $contactGroups as $contactGroup ) {
+		
+						if(!is_a($contactGroup, 'Infusionsoft_ContactGroup')) { continue; }
+		
+						$lists[] = array(
+							'name' => esc_js($contactGroup->__get('GroupName')),
+							'GroupCategoryId' => $contactGroup->__get('GroupCategoryId'),
+							'req' => false,
+							'tag' => esc_js($contactGroup->__get('Id')),
+						);
+					}
+				} else {
+					break;
+				}
+			}
 
-        $contactGroups = Infusionsoft_DataService::query(new Infusionsoft_ContactGroup(), array('Id' => '%'));
-        $lists = array();
-        if(!empty($contactGroups)) {
-            foreach($contactGroups as $contactGroup) {
+			if( !empty( $lists ) ) {
+				// Cache the results for one day; 
+				set_site_transient( 'gf_infusionsoft_tag_list', maybe_serialize( $lists ), DAY_IN_SECONDS );
+			}
 
-                if(!is_a($contactGroup, 'Infusionsoft_ContactGroup')) { continue; }
+		} else {
+			
+			$lists = maybe_unserialize( $lists );
+			
+		}
+		
+		return $lists;
+	}
 
-                $lists[] = array(
-                    'name' => esc_js($contactGroup->__get('GroupName')),
-                    'GroupCategoryId' => $contactGroup->__get('GroupCategoryId'),
-                    'req' => false,
-                    'tag' => esc_js($contactGroup->__get('Id')),
-                );
-            }
-        }
 
-        return $lists;
-    }
 
     private static function get_field_mapping($config = array(), $form_id, $merge_vars){
 
