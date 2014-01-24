@@ -1,8 +1,8 @@
 === Infusionsoft Gravity Forms Add-on ===
 Tags: gravity forms, forms, gravity, form, crm, gravity form, infusionsoft,  Infusion Soft, small business, business, marketing, e-commerce
 Requires at least: 3.3
-Tested up to: 3.7.1
-Stable tag: trunk
+Tested up to: 3.8
+Stable tag: 1.5.5
 Contributors: katzwebdesign, katzwebservices
 Donate link:https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=zackkatz%40gmail%2ecom&item_name=Gravity%20Forms%20Infusionsoft&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=US&bn=PP%2dDonationsBF&charset=UTF%2d8
 
@@ -59,6 +59,9 @@ Well of course it does.
 This plugin is released under a GPL license.
 
 == Changelog ==
+
+= 1.5.5 =
+* Fixed: PHP warnings
 
 = 1.5.4.2 =
 * Fixed: Newly added "Conditionally Added Tags" would not save when added until saving the form first.
@@ -138,6 +141,15 @@ This plugin is released under a GPL license.
 * Liftoff!
 
 == Upgrade Notice ==
+
+= 1.5.5 =
+* Fixed: PHP warnings
+
+= 1.5.4.2 =
+* Fixed: Newly added "Conditionally Added Tags" would not save when added until saving the form first.
+
+= 1.5.4.1 =
+* Fixed: Removed limit to the number of conditional tag
 
 = 1.5.4 =
 * Fixed: Infusionsoft SDK conflicts with other plugins using the `xmlrpc` library.

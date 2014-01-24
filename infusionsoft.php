@@ -1,14 +1,14 @@
 <?php
 /*
 Plugin Name: Gravity Forms Infusionsoft Add-On
-Plugin URI: http://www.seodenver.com
+Plugin URI: http://katz.co
 Description: Integrates Gravity Forms with Infusionsoft allowing form submissions to be automatically sent to your Infusionsoft account
 Version: 1.5.5
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
 
 ------------------------------------------------------------------------
-Copyright 2013 Katz Web Services, Inc.
+Copyright 2014 Katz Web Services, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -298,12 +298,12 @@ EOD;
         return self::$is_debug;
     }
 
-    public function get_setting($key) {
+    static public function get_setting($key) {
         $settings = self::get_settings();
         return isset($settings[$key]) ? (empty($settings[$key]) ? false : $settings[$key]) : false;
     }
 
-    public function get_settings() {
+    static public function get_settings() {
         $settings = get_option("gf_infusionsoft_settings");
         if(!empty($settings)) {
             self::$settings = $settings;
@@ -614,10 +614,11 @@ EOD;
         return $works;
     }
 
-    function r($content, $die = false) {
+    static function r($content, $die = false) {
         echo '<pre>'.print_r($content, true).'</pre>';
         if($die) { die(); }
     }
+
     private static function edit_page(){
         if(isset($_REQUEST['cache'])) {
             delete_site_transient('gf_infusionsoft_default_fields');
@@ -1602,7 +1603,7 @@ EOD;
         }
     }
 
-    function add_note($entry, $contact_id) {
+    static function add_note($entry, $contact_id) {
         global $current_user;
 
         // Old version
@@ -1614,18 +1615,18 @@ EOD;
 
     }
 
-    function get_contact_url($contact_id) {
+    static function get_contact_url($contact_id) {
         return add_query_arg(array('view' => 'edit', 'ID' => $contact_id), 'https://'.self::get_setting('appname').'.infusionsoft.com/Contact/manageContact.jsp');
     }
 
-    function entry_info_link_to_infusionsoft($form_id, $lead) {
+    static function entry_info_link_to_infusionsoft($form_id, $lead) {
         $contact_id = gform_get_meta($lead['id'], 'infusionsoft_id');
         if(!empty($contact_id)) {
             echo sprintf(__('<p>Infusionsoft ID: <a href="%s">Contact #%s</a></p>', 'gravity-forms-infusionsoft'), self::get_contact_url($contact_id), $contact_id);
         }
     }
 
-    private function clean_utf8($string) {
+    static private function clean_utf8($string) {
 
         if(function_exists('mb_convert_encoding') && !seems_utf8($string)) {
             $string = mb_convert_encoding($string, "UTF-8", 'auto');
@@ -1646,7 +1647,7 @@ EOD;
         return $string;
     }
 
-    private function opt_in($email, $entry) {
+    static private function opt_in($email, $entry) {
 
         Infusionsoft_Classloader::loadClass('EmailService');
 
@@ -1655,7 +1656,7 @@ EOD;
         return $EmailService->optIn($email, apply_filters('gravity_forms_infusionsoft_optinsource', sprintf("Gravity Forms Entry #%s (Source: %s)", $entry['id'], $entry['source_url']), $entry));
     }
 
-    private function add_contact($email_address, $merge_vars) {
+    static private function add_contact($email_address, $merge_vars) {
 
         Infusionsoft_Classloader::loadClass('ContactService');
 
@@ -1674,7 +1675,7 @@ EOD;
      * @param array $merge_vars Form posted merge data
      * @param array $entry      Graviy Forms entry array
      */
-    private function add_tags_to_contact($contact_id, $merge_vars, $feed, $entry, $form) {
+    static private function add_tags_to_contact($contact_id, $merge_vars, $feed, $entry, $form) {
 
         $groups = array();
 
@@ -1792,7 +1793,7 @@ EOD;
         }
     }
 
-    private function simpleXMLToArray($xml,
+    static private function simpleXMLToArray($xml,
                     $flattenValues=true,
                     $flattenAttributes = true,
                     $flattenChildren=true,
@@ -1845,7 +1846,7 @@ EOD;
         return $return;
     }
 
-    private function convert_xml_to_object($response) {
+    static private function convert_xml_to_object($response) {
         $response = @simplexml_load_string($response);  // Added @ 1.2.2
         if(is_object($response)) {
             return $response;
@@ -1854,7 +1855,7 @@ EOD;
         }
     }
 
-    private function convert_xml_to_array($response) {
+    static private function convert_xml_to_array($response) {
         $response = self::convert_xml_to_object($response);
         $response = self::simpleXMLToArray($response);
         if(is_array($response)) {
