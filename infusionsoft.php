@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms Infusionsoft Add-On
 Plugin URI: http://katz.co
 Description: Integrates Gravity Forms with Infusionsoft allowing form submissions to be automatically sent to your Infusionsoft account
-Version: 1.5.5
+Version: 1.5.6
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
 
@@ -34,7 +34,7 @@ class GFInfusionsoft {
     private static $path = "gravity-forms-infusionsoft/infusionsoft.php";
     private static $url = "http://www.gravityforms.com";
     private static $slug = "gravity-forms-infusionsoft";
-    private static $version = "1.5.4.2";
+    private static $version = "1.5.6";
     private static $min_gravityforms_version = "1.3.9";
     private static $is_debug = NULL;
     private static $debug_js = false;
@@ -623,6 +623,7 @@ EOD;
         if(isset($_REQUEST['cache'])) {
             delete_site_transient('gf_infusionsoft_default_fields');
             delete_site_transient('gf_infusionsoft_custom_fields');
+            delete_site_transient( 'gf_infusionsoft_tag_list'); //since 1.5.5
         }
         ?>
         <style type="text/css">
@@ -1321,26 +1322,60 @@ EOD;
         return $lists;
     }
 
-    static function get_tag_list() {
 
-        $contactGroups = Infusionsoft_DataService::query(new Infusionsoft_ContactGroup(), array('Id' => '%'));
-        $lists = array();
-        if(!empty($contactGroups)) {
-            foreach($contactGroups as $contactGroup) {
 
-                if(!is_a($contactGroup, 'Infusionsoft_ContactGroup')) { continue; }
+	/**
+	 * Get a list of available tags.
+     *
+     * Tags are cached using `gf_infusionsoft_tag_list` transient.
+     *
+	 * @version 1.5.5
+	 * @access public
+	 * @static
+	 * @return array
+	 */
+	static function get_tag_list() {
 
-                $lists[] = array(
-                    'name' => esc_js($contactGroup->__get('GroupName')),
-                    'GroupCategoryId' => $contactGroup->__get('GroupCategoryId'),
-                    'req' => false,
-                    'tag' => esc_js($contactGroup->__get('Id')),
-                );
-            }
-        }
+		if( false === ( $lists = get_site_transient( 'gf_infusionsoft_tag_list' ) ) ) {
+			$page = 0;
+			$lists = array();
 
-        return $lists;
-    }
+			for( $page = 0; $page <= 2; $page++ ) {
+
+				$contactGroups = Infusionsoft_DataService::query( new Infusionsoft_ContactGroup(), array('Id' => '%'), 1000, $page );
+
+				if( !empty( $contactGroups ) ) {
+					foreach( $contactGroups as $contactGroup ) {
+
+						if(!is_a($contactGroup, 'Infusionsoft_ContactGroup')) { continue; }
+
+						$lists[] = array(
+							'name' => esc_js($contactGroup->__get('GroupName')),
+							'GroupCategoryId' => $contactGroup->__get('GroupCategoryId'),
+							'req' => false,
+							'tag' => esc_js($contactGroup->__get('Id')),
+						);
+					}
+				} else {
+					break;
+				}
+			}
+
+			if( !empty( $lists ) ) {
+				// Cache the results for one day;
+				set_site_transient( 'gf_infusionsoft_tag_list', maybe_serialize( $lists ), DAY_IN_SECONDS );
+			}
+
+		} else {
+
+			$lists = maybe_unserialize( $lists );
+
+		}
+
+		return $lists;
+	}
+
+
 
     private static function get_field_mapping($config = array(), $form_id, $merge_vars){
 
