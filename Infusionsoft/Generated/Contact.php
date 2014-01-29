@@ -97,7 +97,10 @@ class Infusionsoft_Generated_Contact extends Infusionsoft_Generated_Base{
     }
 	
 	public function addCustomField($name){
-		self::$tableFields[] = $name;
+        if (array_search($name, self::$tableFields) === false){
+            self::$tableFields[] = $name;
+        }
+
 	}
 
     public function addCustomFields($fields){
@@ -112,5 +115,21 @@ class Infusionsoft_Generated_Contact extends Infusionsoft_Generated_Base{
             unset(self::$tableFields[$fieldIndex]);
             self::$tableFields = array_values(self::$tableFields);
         }
+    }
+
+    public function removeReadOnlyFields(){
+        $readOnlyFields = array(
+            'CreatedBy',
+            'DateCreated',
+            'Groups',
+            'Id',
+            'LastUpdated',
+            'LastUpdatedBy',
+            'Validated',
+        );
+        foreach ($readOnlyFields as $field){
+            self::removeField($field);
+        }
+
     }
 }

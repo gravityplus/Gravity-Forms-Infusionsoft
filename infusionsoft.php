@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms Infusionsoft Add-On
 Plugin URI: http://katz.co
 Description: Integrates Gravity Forms with Infusionsoft allowing form submissions to be automatically sent to your Infusionsoft account
-Version: 1.5.6
+Version: 1.5.7
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
 
@@ -34,7 +34,7 @@ class GFInfusionsoft {
     private static $path = "gravity-forms-infusionsoft/infusionsoft.php";
     private static $url = "http://www.gravityforms.com";
     private static $slug = "gravity-forms-infusionsoft";
-    private static $version = "1.5.6";
+    private static $version = "1.5.7";
     private static $min_gravityforms_version = "1.3.9";
     private static $is_debug = NULL;
     private static $debug_js = false;
@@ -572,7 +572,7 @@ EOD;
 
             $app = Infusionsoft_AppPool::getApp();
 
-            if(Infusionsoft_DataService::ping('')){
+            if(Infusionsoft_DataService::ping('ProductService')){
 
                 try {
                     Infusionsoft_WebFormService::getMap($app);
@@ -830,7 +830,7 @@ EOD;
                                             <?php
                                             $rownum = 1;
                                             $tabindex = GFCommon::get_tabindex();
-                                            $maxRow = 100;
+                                            $maxRow = apply_filters('gravity_forms_infusionsoft_max_opt_in_conditions', 100);
                                             $colnum = 1;
                                             $fields = !empty($config["meta"]["tag_optin_field_id"]) ? $config["meta"]["tag_optin_field_id"] : array(0 => '');
                                             $disabled_icon_class = !empty($maxRow) && count($fields) >= $maxRow ? "gfield_icon_disabled" : "";

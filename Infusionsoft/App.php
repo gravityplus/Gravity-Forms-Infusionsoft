@@ -18,7 +18,8 @@ class Infusionsoft_App{
 		$this->port = $port;
 
 		$this->client	= new xmlrpc_client('/api/xmlrpc', $this->getHostname(), $this->port);
-		$this->client->setSSLVerifyPeer(0);
+		$this->client->setSSLVerifyPeer(true);
+        $this->client->setCaCertificate(dirname(__FILE__) . '/infusionsoft.pem');
 	}
 
     public function logger(Infusionsoft_Logger $object){
@@ -66,7 +67,8 @@ class Infusionsoft_App{
         do{
             if ($attempts > 0){
                 if (class_exists('CakeLog') && $attempts > 1){
-                    CakeLog::write('notice', "Attempt #$attempts failed in Infusionsoft call. FaultCode: " . $req->faultCode() . " FaultString: " . $req->faultString());
+                    $lastAttemptFaultCode = $req->faultCode();
+                    $lastAttemptFaultString = $req->faultString();
                 }
                 sleep(5);
             }
@@ -99,6 +101,9 @@ class Infusionsoft_App{
 			throw $exception; 
 			return FALSE;
 		}
+        if ($attempts > 2){
+            CakeLog::write('notice', "Infusionsoft call required $attempts calls to receive a successful response. Method: $method FaultCode: $lastAttemptFaultCode FaultString: $lastAttemptFaultString");
+        }
 		return $result;
 	}
 	public function send($method, $args, $retry = false){
@@ -115,7 +120,7 @@ class Infusionsoft_App{
         $this->timeout = $timeout;
     }
 
-    public function formatDate($dateStr) {
+    public static function formatDate($dateStr) {
         $dArray=date_parse($dateStr);
         if ($dArray['error_count']<1) {
             $tStamp =

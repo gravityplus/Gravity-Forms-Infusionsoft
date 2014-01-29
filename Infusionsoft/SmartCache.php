@@ -1,15 +1,15 @@
 <?php
 class Infusionsoft_SmartCache{
-    private $ttl = 120;
+    protected $ttl = 120;
     protected $name = '';
-    private $dir = '';
+    protected $dir = '';
 
     public function __construct($name, $ttl = 300, $dir = 'cache'){
         if (strpos($dir, '/') !== 0 && strpos($dir, ':') !== 1){
             $dir = APP . 'Vendor' . DS . 'php-infusionsoft-sdk' . DS . 'Infusionsoft' . DS . $dir;
         }
         $this->ttl = $ttl;
-        $this->dir = rtrim($dir, '/'); // KWS
+        $this->dir = $dir;
         $this->name = $name;
     }
 
@@ -64,8 +64,8 @@ class Infusionsoft_SmartCache{
     }
 
     public function cacheData($data){
-        $fh = @fopen($this->dir . "/" . $this->name . '.cache', 'w+'); // ZK added @
-        if(!$fh) { return false; } // ZK
+        $fh = fopen( rtrim($this->dir, '/') . "/" . $this->name . '.cache', 'w+');
+
 	    $expiration = time() + $this->ttl;
 	    $data['expiration'] = $expiration;
 
