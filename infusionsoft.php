@@ -572,7 +572,7 @@ EOD;
 
             $app = Infusionsoft_AppPool::getApp();
 
-            if(Infusionsoft_DataService::ping('')){
+            if(Infusionsoft_DataService::ping('ProductService')){
 
                 try {
                     Infusionsoft_WebFormService::getMap($app);
@@ -830,7 +830,7 @@ EOD;
                                             <?php
                                             $rownum = 1;
                                             $tabindex = GFCommon::get_tabindex();
-                                            $maxRow = 100;
+                                            $maxRow = apply_filters('gravity_forms_infusionsoft_max_opt_in_conditions', 100);
                                             $colnum = 1;
                                             $fields = !empty($config["meta"]["tag_optin_field_id"]) ? $config["meta"]["tag_optin_field_id"] : array(0 => '');
                                             $disabled_icon_class = !empty($maxRow) && count($fields) >= $maxRow ? "gfield_icon_disabled" : "";

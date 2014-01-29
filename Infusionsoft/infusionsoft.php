@@ -1,4 +1,5 @@
 <?php
+
 require_once('Classloader.php');
 
 if(!function_exists('xmlrpc_encode_entitites') && !class_exists('xmlrpcresp')) {

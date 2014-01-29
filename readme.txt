@@ -60,6 +60,10 @@ This plugin is released under a GPL license.
 
 == Changelog ==
 
+= 1.5.7 =
+* Added: `gravity_forms_infusionsoft_max_opt_in_conditions` filter to allow for a custom number of conditional opt-ins (default: 100).
+* Fixed: Potential XSS security issue
+
 = 1.5.6 =
 * Fixed: More PHP warnings
 * Modified: Increased the tag limit from 1,000 to 3,000
