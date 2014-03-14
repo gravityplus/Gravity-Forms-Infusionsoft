@@ -785,7 +785,7 @@ EOD;
                 <div id="infusionsoft_field_container" valign="top" class="margin_vertical_10" >
                     <h2><?php _e('2. Map form fields to Infusionsoft fields.', "gravity-forms-infusionsoft"); ?></h2>
                     <h3 class="description"><?php _e('About field mapping:', "gravity-forms-infusionsoft"); ?></h2>
-                    <label for="infusionsoft_fields" class="left_header"><?php _e("Standard Fields", "gravity-forms-infusionsoft"); ?> <?php gform_tooltip("infusionsoft_map_fields") ?> <span class="howto"><a href="<?php echo add_query_arg(array('cache' => 0)); ?>"><?php _e('Refresh Fields &amp; Tags', "gravity-forms-infusionsoft"); ?></a></span></label>
+                    <label for="infusionsoft_fields" class="left_header"><?php _e("Standard Fields", "gravity-forms-infusionsoft"); ?> <?php gform_tooltip("infusionsoft_map_fields") ?> <span class="howto"><a href="<?php echo add_query_arg(array( 'id'=> $id, 'cache' => 0)); ?>"><?php _e('Refresh Fields &amp; Tags', "gravity-forms-infusionsoft"); ?></a></span></label>
                     <div id="infusionsoft_field_list">
                     <?php
 
