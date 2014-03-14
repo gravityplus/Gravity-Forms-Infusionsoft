@@ -769,9 +769,9 @@ EOD;
                 <?php
 
                 foreach($forms as $form){
-                    $selected = absint($form->id) == $config["form_id"] ? "selected='selected'" : "";
+                    $current_form = !empty( $config["form_id"] ) ? $config["form_id"] : '';
                     ?>
-                    <option value="<?php echo absint($form->id) ?>"  <?php echo $selected ?>><?php echo esc_html($form->title) ?></option>
+                    <option value="<?php echo absint($form->id) ?>"  <?php selected( absint( $form->id ), absint( $current_form ), true); ?>><?php echo esc_html($form->title) ?></option>
                     <?php
                 }
                 ?>
