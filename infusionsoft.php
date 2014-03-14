@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms Infusionsoft Add-On
 Plugin URI: http://katz.co
 Description: Integrates Gravity Forms with Infusionsoft allowing form submissions to be automatically sent to your Infusionsoft account
-Version: 1.5.7
+Version: 1.5.7.1
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
 
@@ -34,7 +34,7 @@ class GFInfusionsoft {
     private static $path = "gravity-forms-infusionsoft/infusionsoft.php";
     private static $url = "http://www.gravityforms.com";
     private static $slug = "gravity-forms-infusionsoft";
-    private static $version = "1.5.7";
+    private static $version = "1.5.7.1";
     private static $min_gravityforms_version = "1.3.9";
     private static $is_debug = NULL;
     private static $debug_js = false;
@@ -769,9 +769,9 @@ EOD;
                 <?php
 
                 foreach($forms as $form){
-                    $selected = absint($form->id) == $config["form_id"] ? "selected='selected'" : "";
+                    $current_form = !empty( $config["form_id"] ) ? $config["form_id"] : '';
                     ?>
-                    <option value="<?php echo absint($form->id) ?>"  <?php echo $selected ?>><?php echo esc_html($form->title) ?></option>
+                    <option value="<?php echo absint($form->id) ?>"  <?php selected( absint( $form->id ), absint( $current_form ), true); ?>><?php echo esc_html($form->title) ?></option>
                     <?php
                 }
                 ?>
@@ -785,7 +785,7 @@ EOD;
                 <div id="infusionsoft_field_container" valign="top" class="margin_vertical_10" >
                     <h2><?php _e('2. Map form fields to Infusionsoft fields.', "gravity-forms-infusionsoft"); ?></h2>
                     <h3 class="description"><?php _e('About field mapping:', "gravity-forms-infusionsoft"); ?></h2>
-                    <label for="infusionsoft_fields" class="left_header"><?php _e("Standard Fields", "gravity-forms-infusionsoft"); ?> <?php gform_tooltip("infusionsoft_map_fields") ?> <span class="howto"><a href="<?php echo add_query_arg(array('cache' => 0)); ?>"><?php _e('Refresh Fields &amp; Tags', "gravity-forms-infusionsoft"); ?></a></span></label>
+                    <label for="infusionsoft_fields" class="left_header"><?php _e("Standard Fields", "gravity-forms-infusionsoft"); ?> <?php gform_tooltip("infusionsoft_map_fields") ?> <span class="howto"><a href="<?php echo add_query_arg(array( 'id'=> $id, 'cache' => 0)); ?>"><?php _e('Refresh Fields &amp; Tags', "gravity-forms-infusionsoft"); ?></a></span></label>
                     <div id="infusionsoft_field_list">
                     <?php
 
