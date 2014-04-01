@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms Infusionsoft Add-On
 Plugin URI: http://katz.co
 Description: Integrates Gravity Forms with Infusionsoft allowing form submissions to be automatically sent to your Infusionsoft account
-Version: 1.5.7.1
+Version: 1.5.7.2
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
 
@@ -34,7 +34,7 @@ class GFInfusionsoft {
     private static $path = "gravity-forms-infusionsoft/infusionsoft.php";
     private static $url = "http://www.gravityforms.com";
     private static $slug = "gravity-forms-infusionsoft";
-    private static $version = "1.5.7.1";
+    private static $version = "1.5.7.2";
     private static $min_gravityforms_version = "1.3.9";
     private static $is_debug = NULL;
     private static $debug_js = false;
@@ -47,6 +47,8 @@ class GFInfusionsoft {
     //Plugin starting point. Will load appropriate files
     public static function init(){
         global $pagenow;
+
+        self::log_debug('init version: ' . self::$version );
 
         load_plugin_textdomain('gravity-forms-infusionsoft', FALSE, '/gravity-forms-infusionsoft/languages' );
 
@@ -73,6 +75,9 @@ class GFInfusionsoft {
             if(self::has_access("gravityforms_infusionsoft")){
                 RGForms::add_settings_page("Infusionsoft", array("GFInfusionsoft", "settings_page"), self::get_base_url() . "/images/infusionsoft_wordpress_icon_32.png");
             }
+
+            // Enable debug with Gravity Forms Logging Add-on
+            add_filter( 'gform_logging_supported', array( 'GFInfusionsoft', 'add_debug_settings' ) );
         }
 
         //integrating with Members plugin
@@ -1521,10 +1526,15 @@ EOD;
     }
 
     public static function export($entry, $form){
+
+        self::log_debug( 'init export. Entry ID: ' . $entry['id'] );
+
         //Login to Infusionsoft
         $api = self::get_api();
-        if(!empty($api->lastError))
+        if(!empty($api->lastError)) {
+            self::log_debug( 'Infusionsoft API Error: ' . print_r( $api->lastError, true ) );
             return;
+        }
 
         //loading data class
         require_once(self::get_base_path() . "/data.php");
@@ -1539,8 +1549,12 @@ EOD;
 
     public static function export_feed($entry, $form, $feed, $api){
 
+        self::log_debug( '[Entry ID: '. $entry['id'] . '] Init Export Feed: ' . print_r( $feed, true ) );
+
         $email_field_id = $feed["meta"]["field_map"]["Email"];
         $email = $entry[$email_field_id];
+
+        self::log_debug( '[Entry ID: '. $entry['id'] . '] Email: ' . print_r( $email, true ) );
 
         $merge_vars = array();
 
@@ -1571,18 +1585,24 @@ EOD;
             }
         }
 
+        self::log_debug( '[Entry ID: '. $entry['id'] . '] Infusionsoft Merge Data: ' . print_r( $merge_vars, true ) );
+
         $valid = self::test_api();
 
         if($valid) {
             $contact_id = self::add_contact($email, $merge_vars);
 
+            self::log_debug( '[Entry ID: '. $entry['id'] . '] Contact ID: ' . print_r( $contact_id, true ) );
+
             if($contact_id) {
                 $tags_added = self::add_tags_to_contact($contact_id, $merge_vars, $feed, $entry, $form);
+                self::log_debug( '[Entry ID: '. $entry['id'] . '] Adding Tags: ' . print_r( $tags_added, true ) );
             }
             // Only set them as marketable if they opt-in
             // http://help.infusionsoft.com/developers/services-methods/email/optIn
             if(self::is_optin($form, $feed)) {
                 $opt_in = self::opt_in($email, $entry);
+                self::log_debug( '[Entry ID: '. $entry['id'] . '] Opt In: ' . print_r( $opt_in, true ) );
             }
 
             if(self::is_debug()) {
@@ -1597,11 +1617,14 @@ EOD;
                         'Adding Tags' => $tags_added,
                 ));
             }
-
+            self::log_debug( '[Entry ID: '. $entry['id'] . '] Form Entry Data: ' . print_r( $entry, true ) );
+            self::log_debug( '[Entry ID: '. $entry['id'] . '] Posted Data ($_POST): ' . print_r( $_POST, true ) );
             self::add_note($entry, $contact_id);
 
        } elseif(current_user_can('administrator')) {
             echo '<div class="error" id="message">'.wpautop(sprintf(__("The form didn't create a contact because the Infusionsoft Gravity Forms Add-on plugin isn't properly configured. %sCheck the configuration%s and try again.", 'gravity-forms-infusionsoft'), '<a href="'.admin_url('admin.php?page=gf_settings&amp;addon=Infusionsoft').'">', '</a>')).'</div>';
+
+            self::log_debug( '[Entry ID: '. $entry['id'] . '] '. "API Error: The form didn't create a contact because the Infusionsoft Gravity Forms Add-on plugin isn't properly configured. " );
         }
     }
 
@@ -1885,6 +1908,27 @@ EOD;
     static protected function get_base_path(){
         $folder = basename(dirname(__FILE__));
         return WP_PLUGIN_DIR . "/" . $folder;
+    }
+
+    /**
+     * Enables debug with Gravity Forms logging add-on
+     * @param array $supported_plugins List of plugins
+     */
+    public static function add_debug_settings( $supported_plugins ) {
+        $supported_plugins['infusionsoft'] = 'Gravity Forms Infusionsoft Add-on';
+        return $supported_plugins;
+    }
+
+    /**
+     * Logs messages using Gravity Forms logging add-on
+     * @param  string $message log message
+     * @return void
+     */
+    public static function log_debug( $message ){
+        if ( class_exists("GFLogging") ) {
+            GFLogging::include_logger();
+            GFLogging::log_message('infusionsoft', $message, KLogger::DEBUG);
+        }
     }
 
 
