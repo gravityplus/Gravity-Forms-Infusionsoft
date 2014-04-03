@@ -1445,6 +1445,14 @@ EOD;
         return $tag;
     }
 
+    /**
+     * Getting an array of all fields for the selected form
+     *
+     * @filter `gravity_forms_infusionsoft_form_fields` Modify the fields available
+     * @todo  Convert to using `GFFormsModel::get_entry_meta($form_id)` to fetch fields instead of manually adding them
+     * @param  int $form_id The ID of the form we're getting
+     * @return array          Array of fields with [0] as the field ID, [1] as the field label
+     */
     public static function get_form_fields($form_id){
         $form = RGFormsModel::get_form_meta($form_id);
         $fields = array();
