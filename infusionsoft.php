@@ -1470,6 +1470,21 @@ EOD;
                 }
             }
         }
+
+        //Adding quiz results fields (since v 1.5.7.3)
+        $quiz_fields = GFCommon::get_fields_by_type( $form, array('quiz') );
+        if( count( $quiz_fields ) > 0 ) {
+            // add quiz results' fields
+            $fields[] =  array( 'gquiz_score' , 'Quiz Score Total' );
+            $fields[] =  array( 'gquiz_percent' , 'Quiz Percentage' );
+            $fields[] =  array( 'gquiz_is_pass' , 'Quiz Grade' );
+            $fields[] =  array( 'gquiz_grade' , 'Quiz Pass/Fail' );
+        }
+        //for future use... $extra_columns = GFFormsModel::get_entry_meta($form_id);
+
+        // manage available fields
+        $fields = apply_filters( 'gravity_forms_infusionsoft_form_fields', $fields, $form );
+
         return $fields;
     }
 
