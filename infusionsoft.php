@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms Infusionsoft Add-On
 Plugin URI: http://katz.co
 Description: Integrates Gravity Forms with Infusionsoft allowing form submissions to be automatically sent to your Infusionsoft account
-Version: 1.5.7.3
+Version: 1.5.8
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
 
@@ -34,7 +34,7 @@ class GFInfusionsoft {
     private static $path = "gravity-forms-infusionsoft/infusionsoft.php";
     private static $url = "http://www.gravityforms.com";
     private static $slug = "gravity-forms-infusionsoft";
-    private static $version = "1.5.7.3";
+    private static $version = "1.5.8";
     private static $min_gravityforms_version = "1.3.9";
     private static $is_debug = NULL;
     private static $debug_js = false;
@@ -1471,7 +1471,7 @@ EOD;
             }
         }
 
-        //Adding quiz results fields (since v 1.5.7.3)
+        //Adding quiz results fields (since v 1.5.8)
         $quiz_fields = GFCommon::get_fields_by_type( $form, array('quiz') );
         if( count( $quiz_fields ) > 0 ) {
             // add quiz results' fields
