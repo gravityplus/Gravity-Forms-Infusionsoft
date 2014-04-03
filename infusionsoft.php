@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms Infusionsoft Add-On
 Plugin URI: http://katz.co
 Description: Integrates Gravity Forms with Infusionsoft allowing form submissions to be automatically sent to your Infusionsoft account
-Version: 1.5.7.2
+Version: 1.5.8
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
 
@@ -34,7 +34,7 @@ class GFInfusionsoft {
     private static $path = "gravity-forms-infusionsoft/infusionsoft.php";
     private static $url = "http://www.gravityforms.com";
     private static $slug = "gravity-forms-infusionsoft";
-    private static $version = "1.5.7.2";
+    private static $version = "1.5.8";
     private static $min_gravityforms_version = "1.3.9";
     private static $is_debug = NULL;
     private static $debug_js = false;
@@ -1445,6 +1445,14 @@ EOD;
         return $tag;
     }
 
+    /**
+     * Getting an array of all fields for the selected form
+     *
+     * @filter `gravity_forms_infusionsoft_form_fields` Modify the fields available
+     * @todo  Convert to using `GFFormsModel::get_entry_meta($form_id)` to fetch fields instead of manually adding them
+     * @param  int $form_id The ID of the form we're getting
+     * @return array          Array of fields with [0] as the field ID, [1] as the field label
+     */
     public static function get_form_fields($form_id){
         $form = RGFormsModel::get_form_meta($form_id);
         $fields = array();
@@ -1470,6 +1478,21 @@ EOD;
                 }
             }
         }
+
+        //Adding quiz results fields (since v 1.5.8)
+        $quiz_fields = GFCommon::get_fields_by_type( $form, array('quiz') );
+        if( count( $quiz_fields ) > 0 ) {
+            // add quiz results' fields
+            $fields[] =  array( 'gquiz_score' , 'Quiz Score Total' );
+            $fields[] =  array( 'gquiz_percent' , 'Quiz Percentage' );
+            $fields[] =  array( 'gquiz_is_pass' , 'Quiz Grade' );
+            $fields[] =  array( 'gquiz_grade' , 'Quiz Pass/Fail' );
+        }
+        //for future use... $extra_columns = GFFormsModel::get_entry_meta($form_id);
+
+        // manage available fields
+        $fields = apply_filters( 'gravity_forms_infusionsoft_form_fields', $fields, $form );
+
         return $fields;
     }
 
