@@ -48,8 +48,6 @@ class GFInfusionsoft {
     public static function init(){
         global $pagenow;
 
-        self::log_debug('init version: ' . self::$version );
-
         load_plugin_textdomain('gravity-forms-infusionsoft', FALSE, '/gravity-forms-infusionsoft/languages' );
 
         if($pagenow === 'plugins.php') {
