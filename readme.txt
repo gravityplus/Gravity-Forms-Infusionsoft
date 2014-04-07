@@ -61,6 +61,7 @@ This plugin is released under a GPL license.
 == Changelog ==
 = 1.5.8.1 on April 7, 2014 =
 * Added: Enable the Quiz add-on fields on the feeds' opt-in conditions
+* Fixed: updated hook gform_post_submission (deprecated) to gform_after_submission
 
 = 1.5.8 on April 3, 2014 =
 * Added: Enable the Quiz add-on fields on the feeds
@@ -163,6 +164,7 @@ This plugin is released under a GPL license.
 == Upgrade Notice ==
 = 1.5.8.1 on April 7, 2014 =
 * Added: Enable the Quiz add-on fields on the feeds' opt-in conditions
+* Fixed: updated hook gform_post_submission (deprecated) to gform_after_submission
 
 = 1.5.8 on April 3, 2014 =
 * Added: Enable the Quiz add-on fields on the feeds
