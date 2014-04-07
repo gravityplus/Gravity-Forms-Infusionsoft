@@ -115,8 +115,8 @@ class GFInfusionsoft {
 
         }
         else{
-             //handling post submission.
-            add_action("gform_post_submission", array('GFInfusionsoft', 'export'), 10, 2);
+             //handling post submission. (gform_post_submission deprecated)
+            add_action("gform_after_submission", array('GFInfusionsoft', 'export'), 10, 2);
         }
 
         add_action('gform_entry_info', array('GFInfusionsoft', 'entry_info_link_to_infusionsoft'), 10, 2);
