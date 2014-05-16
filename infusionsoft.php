@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms Infusionsoft Add-On
 Plugin URI: http://katz.co
 Description: Integrates Gravity Forms with Infusionsoft allowing form submissions to be automatically sent to your Infusionsoft account
-Version: 1.5.8
+Version: 1.5.9.1
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
 
@@ -34,10 +34,11 @@ class GFInfusionsoft {
     private static $path = "gravity-forms-infusionsoft/infusionsoft.php";
     private static $url = "http://www.gravityforms.com";
     private static $slug = "gravity-forms-infusionsoft";
-    private static $version = "1.5.8";
+    private static $version = "1.5.9.1";
     private static $min_gravityforms_version = "1.3.9";
     private static $is_debug = NULL;
     private static $debug_js = false;
+    private static $classLoader;
     private static $settings = array(
                 "key" => '',
                 "appname" => '',
@@ -50,7 +51,7 @@ class GFInfusionsoft {
 
         self::log_debug('init version: ' . self::$version );
 
-        load_plugin_textdomain('gravity-forms-infusionsoft', FALSE, '/gravity-forms-infusionsoft/languages' );
+        load_plugin_textdomain( 'gravity-forms-infusionsoft', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
         if($pagenow === 'plugins.php') {
             add_action("admin_notices", array('GFInfusionsoft', 'is_gravity_forms_installed'), 10);
@@ -68,8 +69,6 @@ class GFInfusionsoft {
         }
 
         if(is_admin()){
-            //loading translations
-            load_plugin_textdomain('gravity-forms-infusionsoft', FALSE, '/gravity-forms-infusionsoft/languages' );
 
             //creates a new Settings page on Gravity Forms' settings screen
             if(self::has_access("gravityforms_infusionsoft")){
@@ -542,6 +541,8 @@ EOD;
 
         if(!class_exists("Infusionsoft_Classloader"))
             require_once("Infusionsoft/infusionsoft.php");
+
+        self::$classLoader = new Infusionsoft_Classloader();
 
         $infusionsoft_host = sprintf('%s.infusionsoft.com', self::get_setting('appname'));
         $infusionsoft_api_key = self::get_setting('key');
@@ -1056,7 +1057,7 @@ EOD;
                 jQuery("#infusionsoft_wait").show();
                 jQuery("#infusionsoft_field_group").slideUp();
 
-                var mysack = new sack("<?php bloginfo( 'wpurl' ); ?>/wp-admin/admin-ajax.php" );
+                var mysack = new sack("<?php echo admin_url('admin-ajax.php'); ?>" );
                 mysack.execute = 1;
                 mysack.method = 'POST';
                 mysack.setVar( "action", "gf_select_infusionsoft_form" );
@@ -1273,7 +1274,7 @@ EOD;
         if(!empty($fields) && !isset($_REQUEST['cache'])) {
             $fields = maybe_unserialize($fields);
         } else {
-            Infusionsoft_Classloader::loadClass('Contact');
+            self::$classLoader->loadClass('Contact');
             $Contact = new Infusionsoft_Contact();
             $fields = $Contact->getFields();
 
@@ -1341,11 +1342,17 @@ EOD;
 	 */
 	static function get_tag_list() {
 
-		if( false === ( $lists = get_site_transient( 'gf_infusionsoft_tag_list' ) ) ) {
-			$page = 0;
-			$lists = array();
+		if( !isset($_GET['cache']) || false === ( $lists = get_site_transient( 'gf_infusionsoft_tag_list' ) ) ) {
 
-			for( $page = 0; $page <= 2; $page++ ) {
+            $lists = array(); $page = 0;
+
+            // How many tags do you have?
+            $max_number_of_tags = apply_filters( 'gf_infusionsoft_max_number_of_tags', 4000 );
+
+            // We're fetching 1000 tags per page.
+            $tag_pages = ceil((int)$max_number_of_tags/1000);
+
+			for( $page = 0; $page < $tag_pages; $page++ ) {
 
 				$contactGroups = Infusionsoft_DataService::query( new Infusionsoft_ContactGroup(), array('Id' => '%'), 1000, $page );
 
@@ -1697,7 +1704,7 @@ EOD;
 
     static private function opt_in($email, $entry) {
 
-        Infusionsoft_Classloader::loadClass('EmailService');
+        self::$classLoader->loadClass('EmailService');
 
         $EmailService = new Infusionsoft_EmailService();
 
@@ -1706,7 +1713,7 @@ EOD;
 
     static private function add_contact($email_address, $merge_vars) {
 
-        Infusionsoft_Classloader::loadClass('ContactService');
+        self::$classLoader->loadClass('ContactService');
 
         $ContactService = new Infusionsoft_ContactService();
 
@@ -1782,7 +1789,7 @@ EOD;
         // If there are no tags, get outta here!
         if(!empty($groups)) {
             // Otherwise, we add the groups
-            Infusionsoft_Classloader::loadClass('ContactService');
+            self::$classLoader->loadClass('ContactService');
 
             $ContactService = new Infusionsoft_ContactService();
 
