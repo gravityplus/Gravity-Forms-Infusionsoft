@@ -2,7 +2,7 @@
 Tags: gravity forms, forms, gravity, form, crm, gravity form, infusionsoft,  Infusion Soft, small business, business, marketing, e-commerce
 Requires at least: 3.3
 Tested up to: 3.9.1
-Stable tag: 1.5.9.1
+Stable tag: 1.5.9.2
 Contributors: katzwebdesign, katzwebservices
 Donate link:https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=zackkatz%40gmail%2ecom&item_name=Gravity%20Forms%20Infusionsoft&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=US&bn=PP%2dDonationsBF&charset=UTF%2d8
 
@@ -60,6 +60,9 @@ This plugin is released under a GPL license.
 
 == Changelog ==
 
+= 1.5.9.2 on May 22, 2014 =
+* Include again the Quiz Add-on Fields (from version 1.5.8)
+
 = 1.5.9 & 1.5.9.1 on May 15, 2014 =
 * Fixed: Fetching tags now starts on page 1, not page 2
 * Fixed: Path to translations file
@@ -70,6 +73,9 @@ This plugin is released under a GPL license.
 * Added: Support for mapping Quiz Add-On fields for a feeds
 * Modified: Changed default number of tags to get from Infusionsoft from 3,000 to 4,000.
 * Added: `gf_infusionsoft_max_number_of_tags` filter to allow developers to change how many tags to fetch from Infusionsoft (returns `int`, `4000` default)
+
+= 1.5.8 on April 3, 2014 =
+* Added: Enable the Quiz add-on fields on the feeds
 
 = 1.5.7.2 =
 * Added: Enable debug logging using Gravity Forms Logging Add-on
@@ -167,6 +173,7 @@ This plugin is released under a GPL license.
 * Liftoff!
 
 == Upgrade Notice ==
+<<<<<<< HEAD
 
 = 1.5.9 & 1.5.9.1 on May 15, 2014 =
 * Fixed: Fetching tags now starts on page 1, not page 2
@@ -178,6 +185,14 @@ This plugin is released under a GPL license.
 * Added: Support for mapping Quiz Add-On fields for a feeds
 * Modified: Changed default number of tags to get from Infusionsoft from 3,000 to 4,000.
 * Added: `gf_infusionsoft_max_number_of_tags` filter to allow developers to change how many tags to fetch from Infusionsoft (returns `int`, `4000` default)
+=======
+= 1.5.8.1 on April 7, 2014 =
+* Added: Enable the Quiz add-on fields on the feeds' opt-in conditions
+* Fixed: updated hook gform_post_submission (deprecated) to gform_after_submission
+
+= 1.5.8 on April 3, 2014 =
+* Added: Enable the Quiz add-on fields on the feeds
+>>>>>>> 5f89eca3c311cb6f4f52c3333f6fd77963526d39
 
 = 1.5.7.2 =
 * Added: Enable debug logging using Gravity Forms Logging Add-on

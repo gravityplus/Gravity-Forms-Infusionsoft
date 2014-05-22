@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms Infusionsoft Add-On
 Plugin URI: http://katz.co
 Description: Integrates Gravity Forms with Infusionsoft allowing form submissions to be automatically sent to your Infusionsoft account
-Version: 1.5.9.1
+Version: 1.5.9.2
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
 
@@ -34,7 +34,7 @@ class GFInfusionsoft {
     private static $path = "gravity-forms-infusionsoft/infusionsoft.php";
     private static $url = "http://www.gravityforms.com";
     private static $slug = "gravity-forms-infusionsoft";
-    private static $version = "1.5.9.1";
+    private static $version = "1.5.9.2";
     private static $min_gravityforms_version = "1.3.9";
     private static $is_debug = NULL;
     private static $debug_js = false;
@@ -116,8 +116,8 @@ class GFInfusionsoft {
 
         }
         else{
-             //handling post submission.
-            add_action("gform_post_submission", array('GFInfusionsoft', 'export'), 10, 2);
+             //handling post submission. (gform_post_submission deprecated)
+            add_action("gform_after_submission", array('GFInfusionsoft', 'export'), 10, 2);
         }
 
         add_action('gform_entry_info', array('GFInfusionsoft', 'entry_info_link_to_infusionsoft'), 10, 2);
@@ -806,8 +806,10 @@ EOD;
 
                         //getting list of selection fields to be used by the optin
                         $form_meta = RGFormsModel::get_form_meta($config["form_id"]);
-                        $selection_fields = GFCommon::get_selection_fields($form_meta, $config["meta"]["optin_field_id"]);
-                        $tag_selection_fields = true;
+                        //$selection_fields = GFCommon::get_selection_fields($form_meta, $config["meta"]["optin_field_id"]);
+                        $selection_fields = self::get_selection_fields($form_meta, $config["meta"]["optin_field_id"] );
+
+                       $tag_selection_fields = true;
                     } else {
                         $selection_fields = $tag_selection_fields = false;
                     }
@@ -851,7 +853,7 @@ EOD;
                                                     $odd_even = ($rownum % 2) == 0 ? "even" : "odd";
 
                                                     if(!empty($form_meta) && isset($config["meta"]["tag_optin_field_id"][$key])) {
-                                                        $tag_selection_fields = GFCommon::get_selection_fields($form_meta, $config["meta"]["tag_optin_field_id"][$key]);
+                                                        $tag_selection_fields = self::get_selection_fields($form_meta, $config["meta"]["tag_optin_field_id"][$key]);
                                                     }
 
                                                     $list .= "
@@ -955,9 +957,11 @@ EOD;
                     <script>
                         <?php
                         if(!empty($config["form_id"])){
+                            // this form meta contains quiz results' fields
+                            $form_extended = self::get_form_meta_extended( $config["form_id"] );
                             ?>
                             //creating Javascript form object
-                            form = <?php echo GFCommon::json_encode($form_meta)?> ;
+                            form = <?php echo GFCommon::json_encode( $form_extended )?> ;
 
                             function SetOptinCondition() {
                                 var selectedField = "<?php echo str_replace('"', '\"', $config["meta"]["optin_field_id"])?>";
@@ -1260,11 +1264,54 @@ EOD;
         $str = self::get_field_mapping($config, $form_id, $merge_vars);
 
         //fields meta
-        $form = RGFormsModel::get_form_meta($form_id);
+        $form = self::get_form_meta_extended( $form_id );
 
         //$fields = $form["fields"];
         die("EndSelectForm('" . str_replace("'", "\'", str_replace(")", "\)", $str)) . "', " . GFCommon::json_encode($form) . ");");
     }
+
+    /**
+     * Extends the RGFormsModel::get_form_meta to add custom fields (like quiz results' fields)
+     * @param  string $form_id  form ID
+     * @return array            form meta object (custom)
+     */
+    private static function get_form_meta_extended( $form_id ) {
+
+        if( empty( $form_id ) || !class_exists('RGFormsModel') ) {
+            return array();
+        }
+
+        // get default form meta
+        $form = RGFormsModel::get_form_meta( $form_id );
+
+        //Add quiz results' fields to form to enable the opt-in conditions
+        if( !empty( $form['gravityformsquiz'] ) ) {
+            // add pass/fail field
+            $form['fields'][] = array(
+                'id' => 'gquiz_is_pass',
+                'label'=> 'Quiz Pass/Fail',
+                'inputType' => 'radio',
+                'choices' => array( array( 'text' => 'Pass', 'value' => '1' ), array( 'text' => 'Fail', 'value' => '0' ) )
+                );
+            // add grade field
+            if( !empty( $form['gravityformsquiz']['grades'] ) ) {
+                $grades = array();
+                foreach( $form['gravityformsquiz']['grades'] as $grade ) {
+                    $grades[] = array( 'text' => $grade['text'], 'value' => $grade['text'] );
+                }
+                $form['fields'][] = array(
+                    'id' => 'gquiz_grade',
+                    'label'=> 'Quiz Grade',
+                    'inputType' => 'radio',
+                    'choices' => $grades
+                );
+            }
+        }
+
+        return $form;
+    }
+
+
 
     private static function get_fields() {
 
@@ -1456,7 +1503,7 @@ EOD;
      * Getting an array of all fields for the selected form
      *
      * @filter `gravity_forms_infusionsoft_form_fields` Modify the fields available
-     * @todo  Convert to using `GFFormsModel::get_entry_meta($form_id)` to fetch fields instead of manually adding them
+     *
      * @param  int $form_id The ID of the form we're getting
      * @return array          Array of fields with [0] as the field ID, [1] as the field label
      */
@@ -1486,16 +1533,13 @@ EOD;
             }
         }
 
-        //Adding quiz results fields (since v 1.5.8)
-        $quiz_fields = GFCommon::get_fields_by_type( $form, array('quiz') );
-        if( count( $quiz_fields ) > 0 ) {
-            // add quiz results' fields
-            $fields[] =  array( 'gquiz_score' , 'Quiz Score Total' );
-            $fields[] =  array( 'gquiz_percent' , 'Quiz Percentage' );
-            $fields[] =  array( 'gquiz_is_pass' , 'Quiz Grade' );
-            $fields[] =  array( 'gquiz_grade' , 'Quiz Pass/Fail' );
+        //Adding other fields (since v 1.5.8) - for example the results' quiz fields
+        if( class_exists('GFFormsModel') ) {
+            $extra_fields = GFFormsModel::get_entry_meta($form_id);
+            foreach( $extra_fields as $key => $extra_field ) {
+                $fields[] =  array( $key , $extra_field['label'] );
+            }
         }
-        //for future use... $extra_columns = GFFormsModel::get_entry_meta($form_id);
 
         // manage available fields
         $fields = apply_filters( 'gravity_forms_infusionsoft_form_fields', $fields, $form );
@@ -1630,7 +1674,8 @@ EOD;
             }
             // Only set them as marketable if they opt-in
             // http://help.infusionsoft.com/developers/services-methods/email/optIn
-            if(self::is_optin($form, $feed)) {
+            //if(self::is_optin($form, $feed)) {
+            if( self::is_optin_ok( $entry, $feed ) ) {
                 $opt_in = self::opt_in($email, $entry);
                 self::log_debug( '[Entry ID: '. $entry['id'] . '] Opt In: ' . print_r( $opt_in, true ) );
             }
@@ -1702,6 +1747,28 @@ EOD;
         return $string;
     }
 
+    /**
+     * Extends GFCommon::get_selection_fields function to add other custom selection fields
+     * @param  array $form                  form object
+     * @param  string $selected_field_id    the selected field id to mark is as 'selected'
+     * @return string                       select options html tags
+     */
+    public static function get_selection_fields( $form, $selected_field_id ) {
+        // get the default selection fields
+        $output = GFCommon::get_selection_fields( $form, $selected_field_id );
+
+        // Add custom selection fields (for example, quiz pass and quiz grade )
+        $extra_fields = GFFormsModel::get_entry_meta( $form['id'] );
+        foreach( $extra_fields as $key => $extra_field ) {
+            if( in_array( $key, array( 'gquiz_is_pass', 'gquiz_grade' ) ) ) {
+                $output .= '<option value="' . $key . '" ' . selected( $key, $selected_field_id, false ) . '>' . $extra_field['label'] . '</option>';
+            }
+        }
+
+        return $output;
+    }
+
+
     static private function opt_in($email, $entry) {
 
         self::$classLoader->loadClass('EmailService');
@@ -1710,6 +1777,51 @@ EOD;
 
         return $EmailService->optIn($email, apply_filters('gravity_forms_infusionsoft_optinsource', sprintf("Gravity Forms Entry #%s (Source: %s)", $entry['id'], $entry['source_url']), $entry));
     }
+
+    public static function is_optin($form, $settings){
+        $config = $settings["meta"];
+        $operator = $config["optin_operator"];
+
+        $field = RGFormsModel::get_field($form, $config["optin_field_id"]);
+        $field_value = RGFormsModel::get_field_value($field, array());
+        $is_value_match = is_array($field_value) ? in_array($config["optin_value"], $field_value) : $field_value == $config["optin_value"];
+
+        return  !$config["optin_enabled"] || empty($field) || ($operator == "is" && $is_value_match) || ($operator == "isnot" && !$is_value_match);
+    }
+
+    /**
+     * Alternative is_optin function that uses $entry instead of $form
+     * returns true if entry is OK to be exported
+     *
+     * @access public
+     * @static
+     * @param array $entry
+     * @param array $settings
+     * @return boolean
+     */
+    public static function is_optin_ok( $entry, $settings ){
+
+        if( empty( $settings['meta']['optin_enabled'] ) ) {
+            return true;
+        }
+
+        $operator = $settings['meta']['optin_operator'];
+
+        foreach( $entry as $key => $value ) {
+
+            if( floor( $key ) == $settings['meta']['optin_field_id']
+                || ( !is_numeric( $key ) && $key == $settings['meta']['optin_field_id'] )
+            ) {
+                $field_value[] = empty( $value ) ? '' : $value;
+            }
+        }
+
+        $is_value_match = is_array( $field_value ) ? in_array( $settings['meta']['optin_value'], $field_value) : false;
+
+        return ( $operator == "is" && $is_value_match ) || ( $operator == "isnot" && !$is_value_match );
+    }
+
+
 
     static private function add_contact($email_address, $merge_vars) {
 
@@ -1747,12 +1859,29 @@ EOD;
                 $conditional_field_compare = $feed['meta']['tag_optin_value'][$key];
                 $is = ($feed['meta']['tag_optin_operator'][$key] === 'is');
                 $entry_field = isset($entry["{$conditional_field_id}"]) ? $entry["{$conditional_field_id}"] : null;
-                $field = RGFormsModel::get_field($form, $conditional_field_id);
-                $entry_field = RGFormsModel::get_lead_field_value($entry, $field);
-                $entry_label = GFCommon::get_label($field);
+
+                foreach( $entry as $key => $value ) {
+
+                    if( floor( $key ) == $conditional_field_id
+                        || ( !is_numeric( $key ) && $key == $conditional_field_id )
+                    ) {
+                        $field_value[] = empty( $value ) ? '' : $value;
+                    }
+                }
+
+                $is_value_match = is_array( $field_value ) ? in_array( $conditional_field_compare, $field_value) : false;
+
+
+                // $field = RGFormsModel::get_field($form, $conditional_field_id);
+                // $entry_field = RGFormsModel::get_lead_field_value($entry, $field);
+                // $entry_label = GFCommon::get_label($field);
                 $added = __('No: the comparison did not match', 'gravity-forms-infusionsoft');
 
-                if(
+                if( ( $is && $is_value_match ) || ( !$is && !$is_value_match ) ) {
+
+
+
+               /* if(
                     // Is a match
                    ($is && $entry_field === $conditional_field_compare) ||
                    ($is && is_array($entry_field) && in_array($conditional_field_compare, $entry_field)) ||
@@ -1760,7 +1889,7 @@ EOD;
                    // Or is not a match
                    (!$is && $entry_field !== $conditional_field_compare) ||
                    (!$is && is_array($entry_field) && !in_array($conditional_field_compare, $entry_field))
-                ) {
+                ) { */
                     // Add tag if not already added.
                     foreach($tags as $tagID) {
                        if(!in_array($tagID, $groups)) { $groups[] = $tagID; $added = __('Yes: added', 'gravity-forms-infusionsoft'); } else { $added = 'already exists'; }
@@ -1821,18 +1950,6 @@ EOD;
         deactivate_plugins($plugin);
         update_option('recently_activated', array($plugin => time()) + (array)get_option('recently_activated'));
     }
-
-    public static function is_optin($form, $settings){
-        $config = $settings["meta"];
-        $operator = $config["optin_operator"];
-
-        $field = RGFormsModel::get_field($form, $config["optin_field_id"]);
-        $field_value = RGFormsModel::get_field_value($field, array());
-        $is_value_match = is_array($field_value) ? in_array($config["optin_value"], $field_value) : $field_value == $config["optin_value"];
-
-        return  !$config["optin_enabled"] || empty($field) || ($operator == "is" && $is_value_match) || ($operator == "isnot" && !$is_value_match);
-    }
-
 
     private static function is_gravityforms_installed(){
         return class_exists("RGForms");
