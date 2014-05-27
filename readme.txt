@@ -26,8 +26,8 @@ If this plugin garners much interest, there will be some seriously cool stuff co
 
 * Invoices & Orders integrated with Gravity Forms payments
 * Creation of Opportunities and Companies
-* <s>Custom fields for Contacts</s> - Added in 1.2!
-* <s>Add Tags to Contacts</s> - Added in 1.3!
+* <del>Custom fields for Contacts</del> - Added in 1.2!
+* <del>Add Tags to Contacts</del> - Added in 1.3!
 * Add Contacts to Campaigns
 * And much more
 
