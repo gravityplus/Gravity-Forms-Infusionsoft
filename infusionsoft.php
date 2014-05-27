@@ -1656,6 +1656,10 @@ EOD;
 
                     $merge_vars[$var_tag] = $date;
                 }
+                // Yes/No fields in infusionsoft only work with integer
+                if( $input_type === 'radio' && isset( $entry[ $field_id ] ) && in_array( $entry[ $field_id ], array( '0', '1') ) ) {
+                    $merge_vars[$var_tag] = (int)$entry[ $field_id ];
+                }
             }
         }
 
