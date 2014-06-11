@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms Infusionsoft Add-On
 Plugin URI: http://katz.co
 Description: Integrates Gravity Forms with Infusionsoft allowing form submissions to be automatically sent to your Infusionsoft account
-Version: 1.5.9.3
+Version: 1.5.9.4
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
 
@@ -34,7 +34,7 @@ class GFInfusionsoft {
     private static $path = "gravity-forms-infusionsoft/infusionsoft.php";
     private static $url = "http://www.gravityforms.com";
     private static $slug = "gravity-forms-infusionsoft";
-    private static $version = "1.5.9.3";
+    private static $version = "1.5.9.4";
     private static $min_gravityforms_version = "1.3.9";
     private static $is_debug = NULL;
     private static $debug_js = false;
@@ -719,9 +719,13 @@ EOD;
 
             $config["meta"]["field_map"] = $field_map;
             $config["meta"]["optin_enabled"] = !empty($_POST["infusionsoft_optin_enable"]) ? true : false;
-            $config["meta"]["optin_field_id"] = $config["meta"]["optin_enabled"] ? isset($_POST["infusionsoft_optin_field_id"]) ? @$_POST["infusionsoft_optin_field_id"] : '' : "";
-            $config["meta"]["optin_operator"] = $config["meta"]["optin_enabled"] ? isset($_POST["infusionsoft_optin_operator"]) ? @$_POST["infusionsoft_optin_operator"] : '' : "";
-            $config["meta"]["optin_value"] = $config["meta"]["optin_enabled"] ? @$_POST["infusionsoft_optin_value"] : "";
+            if( $config["meta"]["optin_enabled"] ) {
+                $config["meta"]["optin_field_id"] = isset( $_POST["infusionsoft_optin_field_id"] ) ? $_POST["infusionsoft_optin_field_id"] : '';
+                $config["meta"]["optin_operator"] = isset( $_POST["infusionsoft_optin_operator"] ) ? $_POST["infusionsoft_optin_operator"] : '';
+                $config["meta"]["optin_value"] = isset( $_POST["infusionsoft_optin_value"] ) ? $_POST["infusionsoft_optin_value"] : '';
+            } else {
+                $config["meta"]["optin_field_id"] =  $config["meta"]["optin_operator"] = $config["meta"]["optin_value"] = '';
+            }
 
             $config["meta"]["tag_optin_enabled"] = !empty($_POST["infusionsoft_tag_optin_enable"]) ? true : false;
             $config["meta"]["tag_optin_field_id"] = !empty($config["meta"]["tag_optin_enabled"]) ? isset($_POST["infusionsoft_tag_optin_field_id"]) ? @$_POST["infusionsoft_tag_optin_field_id"] : '' : "";
@@ -964,7 +968,11 @@ EOD;
                             function SetOptinCondition() {
                                 var selectedField = "<?php echo str_replace('"', '\"', $config["meta"]["optin_field_id"])?>";
                                 var selectedValue = "<?php echo str_replace('"', '\"', $config["meta"]["optin_value"])?>";
-                                jQuery("#infusionsoft_optin_value").html(GetFieldValues(jQuery('#infusionsoft_optin_field_id').val(), "", 50));
+                                if( selectedField !== jQuery('#infusionsoft_optin_field_id').val() ) {
+                                    selectedValue = '';
+                                }
+
+                                jQuery("#infusionsoft_optin_value").html(GetFieldValues(jQuery('#infusionsoft_optin_field_id').val(), selectedValue, 50));
                             }
                             //initializing drop downs
                             jQuery(document).ready(function(){
@@ -1626,6 +1634,10 @@ EOD;
         $email_field_id = $feed["meta"]["field_map"]["Email"];
         $email = $entry[$email_field_id];
 
+        if( empty( $email ) ) {
+              self::log_debug( '[Entry ID: '. $entry['id'] . '] No email defined - leaving...' );
+              return;
+        }
         self::log_debug( '[Entry ID: '. $entry['id'] . '] Email: ' . print_r( $email, true ) );
 
         $merge_vars = array();
