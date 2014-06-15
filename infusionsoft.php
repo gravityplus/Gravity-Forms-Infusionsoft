@@ -1862,6 +1862,7 @@ EOD;
     static private function add_tags_to_contact($contact_id, $merge_vars, $feed, $entry, $form) {
 
         $groups = array();
+        $debug = array();
 
         // Add conditional tags
         if(!empty($feed['meta']['tag_optin_tags']) && is_array($feed['meta']['tag_optin_tags'])) {
