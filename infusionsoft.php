@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms Infusionsoft Add-On
 Plugin URI: http://katz.co
 Description: Integrates Gravity Forms with Infusionsoft allowing form submissions to be automatically sent to your Infusionsoft account
-Version: 1.5.9.4
+Version: 1.5.9.5
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
 
@@ -34,7 +34,7 @@ class GFInfusionsoft {
     private static $path = "gravity-forms-infusionsoft/infusionsoft.php";
     private static $url = "http://www.gravityforms.com";
     private static $slug = "gravity-forms-infusionsoft";
-    private static $version = "1.5.9.4";
+    private static $version = "1.5.9.5";
     private static $min_gravityforms_version = "1.3.9";
     private static $is_debug = NULL;
     private static $debug_js = false;
@@ -1649,15 +1649,12 @@ EOD;
                 $field = RGFormsModel::get_field($form, $field_id);
                 $input_type = RGFormsModel::get_input_type($field);
 
-                if($field_id == intval($field_id) && RGFormsModel::get_input_type($field) == "address") { //handling full address
+                if( $field_id == intval($field_id) && RGFormsModel::get_input_type($field) == "address") {
+                    //handling full address
                     $merge_vars[$var_tag] = self::get_address($entry, $field_id);
-                } else if($var_tag != "EMAIL") { //ignoring email field as it will be handled separatelly
-                    $merge_vars[$var_tag] = $entry[$field_id];
-                }
-                $merge_vars[$var_tag] = self::clean_utf8($merge_vars[$var_tag]);
+                    $merge_vars[$var_tag] = self::clean_utf8( $merge_vars[$var_tag] );
 
-                if($input_type === 'date' && !empty($entry[$field_id])) {
-
+                } elseif ( $input_type === 'date' && !empty( $entry[$field_id] ) ) {
                     $original_timezone = date_default_timezone_get();
                     date_default_timezone_set('America/New_York');
                     $date = strtotime($entry[$field_id]);
@@ -1665,11 +1662,17 @@ EOD;
                     date_default_timezone_set($original_timezone);
 
                     $merge_vars[$var_tag] = $date;
-                }
-                // Yes/No fields in infusionsoft only work with integer
-                if( $input_type === 'radio' && isset( $entry[ $field_id ] ) && in_array( $entry[ $field_id ], array( '0', '1') ) ) {
+                } elseif ( $input_type === 'radio' && isset( $entry[ $field_id ] ) && in_array( $entry[ $field_id ], array( '0', '1') ) ) {
+                    // Yes/No fields in infusionsoft only work with integer
                     $merge_vars[$var_tag] = (int)$entry[ $field_id ];
+                } elseif ( $input_type === 'number' && isset( $entry[ $field_id ] ) ) {
+                    $merge_vars[$var_tag] = (float)$entry[ $field_id ];
+
+                } else if( $var_tag != "EMAIL" ) { //ignoring email field as it will be handled separatelly
+                    $merge_vars[$var_tag] = $entry[$field_id];
+                    $merge_vars[$var_tag] = self::clean_utf8( $merge_vars[$var_tag] );
                 }
+
             }
         }
 
@@ -1859,6 +1862,7 @@ EOD;
     static private function add_tags_to_contact($contact_id, $merge_vars, $feed, $entry, $form) {
 
         $groups = array();
+        $debug = array();
 
         // Add conditional tags
         if(!empty($feed['meta']['tag_optin_tags']) && is_array($feed['meta']['tag_optin_tags'])) {
