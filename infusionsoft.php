@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms Infusionsoft Add-On
 Plugin URI: http://katz.co
 Description: Integrates Gravity Forms with Infusionsoft allowing form submissions to be automatically sent to your Infusionsoft account
-Version: 1.5.9.5
+Version: 1.5.9.6
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
 
@@ -34,7 +34,7 @@ class GFInfusionsoft {
     private static $path = "gravity-forms-infusionsoft/infusionsoft.php";
     private static $url = "http://www.gravityforms.com";
     private static $slug = "gravity-forms-infusionsoft";
-    private static $version = "1.5.9.5";
+    private static $version = "1.5.9.6";
     private static $min_gravityforms_version = "1.3.9";
     private static $is_debug = NULL;
     private static $debug_js = false;
@@ -1668,8 +1668,8 @@ EOD;
                     $merge_vars[$var_tag] = apply_filters( 'gf_infusionsoft_radio_value', $entry[ $field_id ], $field_id );
 
                     // Yes/No fields in infusionsoft only work with integer
-                    if( in_array( $entry[ $field_id ], array( '0', '1') ) ) {
-                        $merge_vars[$var_tag] = (int)$entry[ $field_id ];
+                    if( in_array( $merge_vars[$var_tag], array( '0', '1') ) ) {
+                        $merge_vars[$var_tag] = (int)$merge_vars[$var_tag];
                     }
 
                 } elseif ( $input_type === 'number' && isset( $entry[ $field_id ] ) ) {
