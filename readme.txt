@@ -2,7 +2,7 @@
 Tags: gravity forms, forms, gravity, form, crm, gravity form, infusionsoft,  Infusion Soft, small business, business, marketing, e-commerce
 Requires at least: 3.3
 Tested up to: 3.9.1
-Stable tag: 1.5.9.5
+Stable tag: 1.5.9.6
 Contributors: katzwebdesign, katzwebservices
 Donate link:https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=zackkatz%40gmail%2ecom&item_name=Gravity%20Forms%20Infusionsoft&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=US&bn=PP%2dDonationsBF&charset=UTF%2d8
 
@@ -59,6 +59,9 @@ Well of course it does.
 This plugin is released under a GPL license.
 
 == Changelog ==
+= 1.5.9.6 on August 19, 2014 =
+* Added: 'gf_infusionsoft_radio_value' filter to allow radio field value manipulation before sending it to Infusionsoft.
+
 = 1.5.9.5 on June 15, 2014 =
 * Fixed: Cast Number field type before sending it to Infusionsoft
 
@@ -182,6 +185,10 @@ This plugin is released under a GPL license.
 * Liftoff!
 
 == Upgrade Notice ==
+
+= 1.5.9.6 on August 19, 2014 =
+* Added: 'gf_infusionsoft_radio_value' filter to allow radio field value manipulation before sending it to Infusionsoft.
+
 = 1.5.9.5 on June 15, 2014 =
 * Fixed: Cast Number field type before sending it to Infusionsoft
 
