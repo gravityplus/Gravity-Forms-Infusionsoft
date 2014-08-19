@@ -1662,9 +1662,16 @@ EOD;
                     date_default_timezone_set($original_timezone);
 
                     $merge_vars[$var_tag] = $date;
-                } elseif ( $input_type === 'radio' && isset( $entry[ $field_id ] ) && in_array( $entry[ $field_id ], array( '0', '1') ) ) {
+                } elseif ( $input_type === 'radio' && isset( $entry[ $field_id ] ) ) {
+
+                    // Radio buttons are sent to infusionsoft as strings by default.
+                    $merge_vars[$var_tag] = apply_filters( 'gf_infusionsoft_radio_value', $entry[ $field_id ], $field_id );
+
                     // Yes/No fields in infusionsoft only work with integer
-                    $merge_vars[$var_tag] = (int)$entry[ $field_id ];
+                    if( in_array( $entry[ $field_id ], array( '0', '1') ) ) {
+                        $merge_vars[$var_tag] = (int)$entry[ $field_id ];
+                    }
+
                 } elseif ( $input_type === 'number' && isset( $entry[ $field_id ] ) ) {
                     $merge_vars[$var_tag] = (float)$entry[ $field_id ];
 
