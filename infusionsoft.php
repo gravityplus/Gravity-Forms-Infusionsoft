@@ -3,9 +3,11 @@
 Plugin Name: Gravity Forms Infusionsoft Add-On
 Plugin URI: http://katz.co
 Description: Integrates Gravity Forms with Infusionsoft allowing form submissions to be automatically sent to your Infusionsoft account
-Version: 1.5.9.6
+Version: 1.5.10
 Author: Katz Web Services, Inc.
 Author URI: http://www.katzwebservices.com
+Text Domain: gravity-forms-infusionsoft
+Domain Path: /languages
 
 ------------------------------------------------------------------------
 Copyright 2014 Katz Web Services, Inc.
@@ -34,7 +36,7 @@ class GFInfusionsoft {
     private static $path = "gravity-forms-infusionsoft/infusionsoft.php";
     private static $url = "http://www.gravityforms.com";
     private static $slug = "gravity-forms-infusionsoft";
-    private static $version = "1.5.9.6";
+    private static $version = "1.5.10";
     private static $min_gravityforms_version = "1.3.9";
     private static $is_debug = NULL;
     private static $debug_js = false;
@@ -374,7 +376,7 @@ EOD;
                 <h3><?php _e("Uninstall Infusionsoft Add-On", "gravity-forms-infusionsoft") ?></h3>
                 <div class="delete-alert"><?php _e("Warning! This operation deletes ALL Infusionsoft Feeds.", "gravity-forms-infusionsoft") ?>
                     <?php
-                    $uninstall_button = '<input type="submit" name="uninstall" value="' . __("Uninstall Infusionsoft Add-On", "gravity-forms-infusionsoft") . '" class="button" onclick="return confirm(\'' . __("Warning! ALL Infusionsoft Feeds will be deleted. This cannot be undone. \'OK\' to delete, \'Cancel\' to stop", "gravity-forms-infusionsoft") . '\');"/>';
+                    $uninstall_button = '<input type="submit" name="uninstall" value="' . __("Uninstall Infusionsoft Add-On", "gravity-forms-infusionsoft") . '" class="button" onclick="return confirm(\'' . esc_js( __("Warning! ALL Infusionsoft Feeds will be deleted. This cannot be undone. 'OK' to delete, 'Cancel' to stop", "gravity-forms-infusionsoft") ) . '\');"/>';
                     echo apply_filters("gform_infusionsoft_uninstall_button", $uninstall_button);
                     ?>
                 </div>
@@ -449,7 +451,7 @@ EOD;
                             <option value='delete'><?php _e("Delete", "gravity-forms-infusionsoft") ?></option>
                         </select>
                         <?php
-                        echo '<input type="submit" class="button" value="' . __("Apply", "gravity-forms-infusionsoft") . '" onclick="if( jQuery(\'#bulk_action\').val() == \'delete\' && !confirm(\'' . __("Delete selected feeds? ", "gravity-forms-infusionsoft") . __("\'Cancel\' to stop, \'OK\' to delete.", "gravity-forms-infusionsoft") .'\')) { return false; } return true;"/>';
+                        echo '<input type="submit" class="button" value="' . __("Apply", "gravity-forms-infusionsoft") . '" onclick="if( jQuery(\'#bulk_action\').val() == \'delete\' && !confirm(\'' . __("Delete selected feeds? ", "gravity-forms-infusionsoft") . esc_js( __("'Cancel' to stop, 'OK' to delete.", "gravity-forms-infusionsoft") ) .'\')) { return false; } return true;"/>';
                         ?>
                     </div>
                 </div>
@@ -489,7 +491,7 @@ EOD;
                                             </span>
 
                                             <span class="edit">
-                                            <a title="<?php _e("Delete", "gravity-forms-infusionsoft") ?>" href="javascript: if(confirm('<?php _e("Delete this feed? ", "gravity-forms-infusionsoft") ?> <?php _e("\'Cancel\' to stop, \'OK\' to delete.", "gravity-forms-infusionsoft") ?>')){ DeleteSetting(<?php echo $setting["id"] ?>);}"><?php _e("Delete", "gravity-forms-infusionsoft")?></a>
+                                            <a title="<?php _e("Delete", "gravity-forms-infusionsoft") ?>" href="javascript: if(confirm('<?php echo esc_js( __( "Delete this feed? 'Cancel' to stop, 'OK' to delete.", "gravity-forms-infusionsoft") ); ?>')){ DeleteSetting(<?php echo $setting["id"] ?>);}"><?php _e("Delete", "gravity-forms-infusionsoft")?></a>
                                             |
                                             </span>
 
@@ -566,10 +568,15 @@ EOD;
             $works = false;
             $class = 'updated';
         } else if(empty($appname)) {
-            $message = wpautop(__("Your Account Subdomain (also called \"Application Name\") is required. <label for='gf_infusionsoft_appname'><a>Enter it below</a></label>. <span class='howto'>If you access your Infusionsoft account from <span class='code' style='font-style:normal'><strong>example123</strong>.infusionsoft.com</span>, your Account Subdomain is <strong class='code' style='font-style:normal;'>example123</strong>.</span>", 'gravity-forms-infusionsoft'));
+
+            $message = sprintf( __("Your Account Subdomain (also called \"Application Name\") is required. %sEnter it below%s.", 'gravity-forms-infusionsoft'), "<label for='gf_infusionsoft_appname'><a>", "</a></label>" );
+            $message .= "<span class='howto'>";
+            $message .= sprintf( __("If you access your Infusionsoft account from %sexample123%s.infusionsoft.com%s, your Account Subdomain is %sexample123%s", 'gravity-forms-infusionsoft'), "<span class='code' style='font-style:normal'><strong>", "</strong>", "</span>", "<strong class='code' style='font-style:normal;'>", "</strong>" );
+            $message .= "</span>";
+
             $works = false;
         } elseif(empty($key)) {
-            $message = wpautop(__('Your API Key is required, please <label for="gf_infusionsoft_key"><a>enter your API key below</a></label>.', 'gravity-forms-infusionsoft'));
+            $message = wpautop( sprintf( __('Your API Key is required, please %senter your API key below%s.', 'gravity-forms-infusionsoft'), '<label for="gf_infusionsoft_key"><a>', '</a></label>' ) );
             $works = false;
         } else {
             self::get_api();
@@ -1573,7 +1580,7 @@ EOD;
 
     public static function get_mapped_field_list($variable_name, $selected_field, $fields){
         $field_name = "infusionsoft_map_field_" . $variable_name;
-        $str = "<select name='$field_name' id='$field_name'><option value=''>" . __("", "gravity-forms-infusionsoft") . "</option>";
+        $str = "<select name='$field_name' id='$field_name'><option value=''></option>";
         foreach($fields as $field){
             $field_id = $field[0];
             $field_label = $field[1];

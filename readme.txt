@@ -1,8 +1,8 @@
 === Infusionsoft Gravity Forms Add-on ===
 Tags: gravity forms, forms, gravity, form, crm, gravity form, infusionsoft,  Infusion Soft, small business, business, marketing, e-commerce
 Requires at least: 3.3
-Tested up to: 3.9.1
-Stable tag: 1.5.9.6
+Tested up to: 4.0
+Stable tag: 1.5.10
 Contributors: katzwebdesign, katzwebservices
 Donate link:https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=zackkatz%40gmail%2ecom&item_name=Gravity%20Forms%20Infusionsoft&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=US&bn=PP%2dDonationsBF&charset=UTF%2d8
 
@@ -52,6 +52,9 @@ If you're interested in having this functionality, <strong>leave us a note in th
 
 == Frequently Asked Questions ==
 
+= How do I translate the plugin?
+We'd love to support your language. Please [translate the plugin here](https://www.transifex.com/projects/p/gravity-forms-infusionsoft/)!
+
 = Does this plugin require Infusionsoft? =
 Well of course it does.
 
@@ -59,6 +62,11 @@ Well of course it does.
 This plugin is released under a GPL license.
 
 == Changelog ==
+
+= 1.5.10 on September 12, 2014 =
+* Infusionsoft updated their SSL provider. The plugin has updated a file to match their security settings.
+* Added: Translation files. If you want to translate the plugin into your language, [please do so here](https://www.transifex.com/projects/p/gravity-forms-infusionsoft/).
+
 = 1.5.9.6 on August 19, 2014 =
 * Added: 'gf_infusionsoft_radio_value' filter to allow radio field value manipulation before sending it to Infusionsoft.
 
