@@ -168,7 +168,6 @@ class GFInfusionsoft {
                 mysack.setVar( "rg_update_feed_active", "<?php echo wp_create_nonce("rg_update_feed_active") ?>" );
                 mysack.setVar( "feed_id", feed_id );
                 mysack.setVar( "is_active", is_active ? 0 : 1 );
-                mysack.encVar( "cookie", document.cookie, false );
                 mysack.onError = function() { alert('<?php echo esc_js( __("Ajax error while updating feed", "gravity-forms-infusionsoft" ) ); ?>' )};
                 mysack.runAJAX();
 
@@ -670,7 +669,7 @@ EOD;
             #infusionsoft_doubleoptin_warning{padding-left: 5px; padding-bottom:4px; font-size: 10px;}
         </style>
         <script>
-            var form = Array();
+            var form = [];
         </script>
         <div class="wrap">
             <a href="https://katz.si/inhome"><img alt="<?php esc_attr_e("Infusionsoft Feeds", "gravity-forms-infusionsoft") ?>" src="<?php echo self::get_base_url()?>/images/infusion-logo.png" style="display:block; margin:15px 7px 0 0;" width="200" height="33"/></a>
@@ -792,7 +791,7 @@ EOD;
                 ?>
                 <label for="gf_infusionsoft_form" class="left_header"><?php esc_html_e("Gravity Form", "gravity-forms-infusionsoft"); ?> <?php gform_tooltip("infusionsoft_gravity_form") ?></label>
 
-                <select id="gf_infusionsoft_form" name="gf_infusionsoft_form" onchange="SelectForm(jQuery(this).val());">
+                <select id="gf_infusionsoft_form" name="gf_infusionsoft_form">
                 <option value=""><?php esc_html_e("Select a form", "gravity-forms-infusionsoft"); ?> </option>
                 <?php
 
@@ -958,7 +957,7 @@ EOD;
                                         <div class="infusionsoft_optin_condition_fields" <?php echo empty($selection_fields) ? "style='display:none'" : ""?>>
                                             <?php esc_html_e("Export to Infusionsoft if ", "gravity-forms-infusionsoft") ?>
 
-                                            <select id="infusionsoft_optin_field_id" name="infusionsoft_optin_field_id" class='optin_select' onchange='SetOptinCondition();'><?php echo $selection_fields ?></select>
+                                            <select id="infusionsoft_optin_field_id" name="infusionsoft_optin_field_id" class='optin_select'><?php echo $selection_fields ?></select>
                                             <select id="infusionsoft_optin_operator" name="infusionsoft_optin_operator">
                                                 <option value="is" <?php echo (isset($config["meta"]["optin_operator"]) && $config["meta"]["optin_operator"] == "is") ? "selected='selected'" : "" ?>><?php esc_html_e("is", "gravity-forms-infusionsoft") ?></option>
                                                 <option value="isnot" <?php echo (isset($config["meta"]["optin_operator"]) && $config["meta"]["optin_operator"] == "isnot") ? "selected='selected'" : "" ?>><?php esc_html_e("is not", "gravity-forms-infusionsoft") ?></option>
@@ -1030,6 +1029,7 @@ EOD;
         </div>
 
 <script>
+
     jQuery(document).ready(function($) {
 
     <?php if(isset($_REQUEST['id'])) { ?>
@@ -1053,23 +1053,20 @@ EOD;
             });
         });
     <?php } ?>
+
+        <?php if(empty($config["form_id"])){ ?>
+        SelectForm($('#gf_infusionsoft_form').val());
+        <?php } ?>
+
+        $('body').on('change', '.optin_tag_field_id', function() {
+            var $parent = $(this).parents('tr');
+            var key = $parent.data('fieldid');
+            var value = $(this).val();
+            $("#infusionsoft_tag_optin_value_"+key, $parent).html(GetFieldValues(value, "", 70));
+        }).on('change', '#gf_infusionsoft_form', function() {
+            SelectForm( $(this).val() );
+        }).on('change', '#infusionsoft_optin_field_id', SetOptinCondition );
     });
-        </script>
-        <script>
-
-
-            jQuery(document).ready(function($) {
-                <?php if(empty($config["form_id"])){ ?>
-                SelectForm($('#gf_infusionsoft_form').val());
-                <?php } ?>
-
-                $('body').on('change', '.optin_tag_field_id', function() {
-                    var $parent = $(this).parents('tr');
-                    var key = $parent.data('fieldid');
-                    var value = $(this).val();
-                    $("#infusionsoft_tag_optin_value_"+key, $parent).html(GetFieldValues(value, "", 70));
-                });
-            });
 
             function SelectForm(formId){
 
@@ -1088,7 +1085,6 @@ EOD;
                 mysack.setVar( "action", "gf_select_infusionsoft_form" );
                 mysack.setVar( "gf_select_infusionsoft_form", "<?php echo wp_create_nonce("gf_select_infusionsoft_form") ?>" );
                 mysack.setVar( "form_id", formId);
-                mysack.encVar( "cookie", document.cookie, false );
                 mysack.onError = function() {jQuery("#infusionsoft_wait").hide(); alert('<?php echo esc_js( __("Ajax error while selecting a form", "gravity-forms-infusionsoft") ); ?>' )};
                 mysack.runAJAX();
                 return true;
