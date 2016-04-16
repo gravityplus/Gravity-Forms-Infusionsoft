@@ -569,18 +569,20 @@ EOD;
         $appname = self::get_setting('appname');
 
         if(empty($appname) && empty($key)) {
-            $message = wpautop(sprintf(__('
-            <a href="https://katz.si/inhome"><img alt="Infusionsoft Logo" src="%s" style="display:block; margin:15px 7px 0 0;" width="200" height="33"/></a>
-            <h3>Don\'t have an <a href="https://katz.si/inhome">Infusionsoft</a> account?</h3>
-            This plugin requires an Infusionsoft account. If you have an Infusionsoft account, fill out the settings form below. Otherwise, you should sign up for an Infusionsoft account and start taking advantage of the world\'s best CRM.
 
-            <a href="https://katz.si/indemo" class="button button-primary">Sign up for Infusionsoft Today!</a> <a href="https://katz.si/inhome" class="button button-secondary">Visit Infusionsoft.com</a>
-            ', 'gravity-forms-infusionsoft'), self::get_base_url().'/images/infusion-logo.png'));
+            $message = sprintf( '%s<h3>%s</h3><p>%s</p><p><a href="https://katz.si/indemo" class="button button-primary">%s</a> <a href="https://katz.si/inhome" class="button button-secondary">%s</a></p>',
+		        '<a href="https://katz.si/inhome"><img alt="Infusionsoft Logo" src="' . esc_attr( self::get_base_url().'/images/infusion-logo.png' ) .'" style="display:block; margin:15px 7px 0 0;" width="200" height="33"/></a>',
+		        sprintf( esc_html__('Don\'t have an %sInfusionsoft%s account?', 'gravity-forms-infusionsoft'), '<a href="https://katz.si/inhome">', '</a>' ),
+		        esc_html__('This plugin requires an Infusionsoft account. If you have an Infusionsoft account, fill out the settings form below. Otherwise, you should sign up for an Infusionsoft account and start taking advantage of the world\'s best CRM.', 'gravity-forms-infusionsoft'),
+		        esc_html__('Sign up for Infusionsoft Today!', 'gravity-forms-infusionsoft'),
+		        esc_html__('Visit Infusionsoft.com', 'gravity-forms-infusionsoft')
+            );
+
             $works = false;
             $class = 'updated';
         } else if(empty($appname)) {
 
-            $message = sprintf( __("Your Account Subdomain (also called \"Application Name\") is required. %sEnter it below%s.", 'gravity-forms-infusionsoft'), "<label for='gf_infusionsoft_appname'><a>", "</a></label>" );
+            $message = sprintf( esc_html__("Your Account Subdomain (also called \"Application Name\") is required. %sEnter it below%s.", 'gravity-forms-infusionsoft'), "<label for='gf_infusionsoft_appname'><a>", "</a></label>" );
             $message .= "<span class='howto'>";
             $message .= sprintf( esc_attr__("If you access your Infusionsoft account from %sexample123%s.infusionsoft.com%s, your Account Subdomain is %sexample123%s", 'gravity-forms-infusionsoft'), "<span class='code' style='font-style:normal'><strong>", "</strong>", "</span>", "<strong class='code' style='font-style:normal;'>", "</strong>" );
             $message .= "</span>";
@@ -1812,7 +1814,7 @@ EOD;
 
         $EmailService = new Infusionsoft_EmailService();
 
-        return $EmailService->optIn($email, apply_filters('gravity_forms_infusionsoft_optinsource', sprintf("Gravity Forms Entry #%s (Source: %s)", $entry['id'], $entry['source_url']), $entry));
+        return $EmailService->optIn($email, apply_filters('gravity_forms_infusionsoft_optinsource', sprintf( __("Gravity Forms Entry #%s (Source: %s)", 'gravity-forms-infusionsoft'), $entry['id'], $entry['source_url']), $entry));
     }
 
     public static function is_optin($form, $settings){
