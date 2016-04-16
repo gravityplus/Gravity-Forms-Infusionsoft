@@ -345,12 +345,19 @@ EOD;
 
 ?>
 
-        <form method="post" action="<?php echo remove_query_arg(array('refresh', 'retrieveListNames', '_wpnonce')); ?>" class="alignleft" style="width:60%;">
+		<style>
+		.gforms_form_settings th {
+			width: 300px;
+		}
+		</style>
+        <form method="post" action="<?php echo esc_url( remove_query_arg(array('refresh', 'retrieveListNames', '_wpnonce')) ); ?>" id="gform-settings">
             <?php wp_nonce_field("update", "gf_infusionsoft_update") ?>
 
-            <h2><?php _e("Infusionsoft Account Information", "gravity-forms-infusionsoft") ?></h2>
+            <h3><span><?php esc_html_e("Infusionsoft Account Information", "gravity-forms-infusionsoft") ?></span></h3>
 
-            <table class="form-table">
+		<div class="gaddon-section gaddon-first-section">
+            <table class="form-table gforms_form_settings">
+            <tbody>
                 <tr>
                     <th scope="row"><label for="gf_infusionsoft_key"><?php esc_html_e("Infusionsoft API Key", "gravity-forms-infusionsoft"); ?></label><span class="howto"><a href="http://help.infusionsoft.com/userguides/get-started/tips-and-tricks/api-key"><?php esc_html_e("Learn how to find your API key", 'gravity-forms-infusionsoft'); ?></a></th>
                     <td><input type="text" id="gf_infusionsoft_key" style="padding:5px 5px 3px;" class="code" name="gf_infusionsoft_key" size="80" value="<?php echo empty($settings["key"]) ? '' : esc_attr($settings["key"]); ?>"/></td>
@@ -366,6 +373,7 @@ EOD;
                 <tr>
                     <td colspan="2" ><input type="submit" name="gf_infusionsoft_submit" class="button-primary" value="<?php esc_html_e("Save Settings", "gravity-forms-infusionsoft") ?>" /></td>
                 </tr>
+			</tbody>
             </table>
         </div>
         <form action="" method="post">
