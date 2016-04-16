@@ -352,7 +352,7 @@ EOD;
 
             <table class="form-table">
                 <tr>
-                    <th scope="row"><label for="gf_infusionsoft_key"><?php _e("Infusionsoft API Key", "gravity-forms-infusionsoft"); ?></label><span class="howto"><a href="http://ug.infusionsoft.com/article/AA-00442/0/How-do-I-enable-the-Infusionsoft-API-and-generate-an-API-Key.html"><?php _e("Learn how to find your API key", 'gravity-forms-infusionsoft'); ?></a></th>
+                    <th scope="row"><label for="gf_infusionsoft_key"><?php _e("Infusionsoft API Key", "gravity-forms-infusionsoft"); ?></label><span class="howto"><a href="http://help.infusionsoft.com/userguides/get-started/tips-and-tricks/api-key"><?php esc_html_e("Learn how to find your API key", 'gravity-forms-infusionsoft'); ?></a></th>
                     <td><input type="text" id="gf_infusionsoft_key" style="padding:5px 5px 3px;" class="code" name="gf_infusionsoft_key" size="80" value="<?php echo empty($settings["key"]) ? '' : esc_attr($settings["key"]); ?>"/></td>
                 </tr>
                 <tr>
