@@ -324,7 +324,7 @@ EOD;
             self::uninstall();
 
             ?>
-            <div class="updated fade" style="padding:20px;"><?php sprintf( esc_html_e("Gravity Forms Infusionsoft Add-On has been successfully uninstalled. It can be re-activated from the %splugins page%s.", "gravity-forms-infusionsoft"), "<a href='plugins.php'>","</a>"); ?></div>
+            <div class="updated fade" style="padding:20px;"><?php printf( esc_html__("Gravity Forms Infusionsoft Add-On has been successfully uninstalled. It can be re-activated from the %splugins page%s.", "gravity-forms-infusionsoft"), "<a href='" . esc_url( admin_url( 'plugins.php' ) ) . "'>","</a>"); ?></div>
             <?php
             return;
         }
@@ -344,38 +344,41 @@ EOD;
         $valid = self::test_api(true);
 
 ?>
-
-		<style>
-		.gforms_form_settings th {
-			width: 300px;
-		}
-		</style>
         <form method="post" action="<?php echo esc_url( remove_query_arg(array('refresh', 'retrieveListNames', '_wpnonce')) ); ?>" id="gform-settings">
             <?php wp_nonce_field("update", "gf_infusionsoft_update") ?>
 
             <h3><span style="line-height: 38px"><img src="<?php echo esc_attr( plugins_url( 'images/icon.png', __FILE__ ) ); ?>" width="38" height="38" alt="" style="float:left;" /><?php esc_html_e("Infusionsoft Settings", "gravity-forms-infusionsoft") ?></span></h3>
 
 		<div class="gaddon-section gaddon-first-section">
+			<h4 class="gaddon-section-title gf_settings_subgroup_title"><?php esc_html_e('Infusionsoft Account Information', 'gravity-forms-infusionsoft'); ?></h4>
+
             <table class="form-table gforms_form_settings">
-            <tbody>
-                <tr>
-                    <th scope="row"><label for="gf_infusionsoft_key"><?php esc_html_e("Infusionsoft API Key", "gravity-forms-infusionsoft"); ?></label><span class="howto"><a href="http://help.infusionsoft.com/userguides/get-started/tips-and-tricks/api-key"><?php esc_html_e("Learn how to find your API key", 'gravity-forms-infusionsoft'); ?></a></th>
-                    <td><input type="text" id="gf_infusionsoft_key" style="padding:5px 5px 3px;" class="code" name="gf_infusionsoft_key" size="80" value="<?php echo empty($settings["key"]) ? '' : esc_attr($settings["key"]); ?>"/></td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="gf_infusionsoft_appname"><?php esc_html_e("Infusionsoft Account Subdomain", "gravity-forms-infusionsoft"); ?></label> </th>
-                    <td><input type="text" id="gf_infusionsoft_appname" name="gf_infusionsoft_appname" size="30" value="<?php echo empty($settings["appname"]) ? '' : esc_attr($settings["appname"]); ?>"/></td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="gf_infusionsoft_debug"><?php esc_html_e("Debug Form Submissions for Administrators", "gravity-forms-infusionsoft"); ?></label> </th>
-                    <td><input type="checkbox" id="gf_infusionsoft_debug" name="gf_infusionsoft_debug" value="1" <?php checked($settings["debug"], true); ?>/></td>
-                </tr>
-                <tr>
-                    <td colspan="2" ><input type="submit" name="gf_infusionsoft_submit" class="button-primary" value="<?php esc_html_e("Save Settings", "gravity-forms-infusionsoft") ?>" /></td>
-                </tr>
-			</tbody>
+	            <tbody>
+	                <tr>
+	                    <th scope="row"><label for="gf_infusionsoft_key"><?php esc_html_e("API Key", "gravity-forms-infusionsoft"); ?></label><span class="howto"><a href="http://help.infusionsoft.com/userguides/get-started/tips-and-tricks/api-key"><?php esc_html_e("Learn how to find your API key", 'gravity-forms-infusionsoft'); ?></a></th>
+	                    <td><input type="text" id="gf_infusionsoft_key" style="padding:5px 5px 3px;" class="code" placeholder="<?php printf( esc_attr('example: %s', "gravity-forms-infusionsoft" ), 'otj4nlqbbkfttj81wx91119mr1j5g1ga7ttatzo71am3z9g8gkv24dn9ugaiphjb' ); ?>" name="gf_infusionsoft_key" size="68" value="<?php echo empty($settings["key"]) ? '' : esc_attr($settings["key"]); ?>"/></td>
+	                </tr>
+	                <tr>
+	                    <th scope="row"><label for="gf_infusionsoft_appname"><?php esc_html_e("Account Subdomain", "gravity-forms-infusionsoft"); ?></label> </th>
+	                    <td><input type="text" class="code" id="gf_infusionsoft_appname" name="gf_infusionsoft_appname" size="10" placeholder="<?php printf( esc_attr('example: %s', "gravity-forms-infusionsoft" ), 'ab123' ); ?>" value="<?php echo empty($settings["appname"]) ? '' : esc_attr($settings["appname"]); ?>"/></td>
+	                </tr>
+				</tbody>
             </table>
         </div>
+        <div class="gaddon-section">
+            <h4 class="gaddon-section-title gf_settings_subgroup_title"><?php esc_html_e('Debugging', 'gravity-forms-infusionsoft'); ?></h4>
+	        <table class="form-table gforms_form_settings">
+		        <tbody>
+		            <tr>
+	                    <th scope="row"><label for="gf_infusionsoft_debug"><?php esc_html_e("Debug Form Submissions", "gravity-forms-infusionsoft"); ?></label></th>
+	                    <td><span class="checkbox"><input type="checkbox" class="checkbox" id="gf_infusionsoft_debug" name="gf_infusionsoft_debug" value="1" <?php checked($settings["debug"], true); ?>/>  <?php esc_html_e('Dubugging messages will be shown only to Administrators', 'gravity-forms-infusionsoft'); ?></span></td>
+	                </tr>
+	                <tr>
+	                    <td colspan="2" ><input type="submit" name="gf_infusionsoft_submit" class="button button-large button-primary" value="<?php esc_html_e("Save Settings", "gravity-forms-infusionsoft") ?>" /></td>
+	                </tr>
+		       </tbody>
+	       </table>
+       </div>
         <form action="" method="post">
             <?php wp_nonce_field("uninstall", "gf_infusionsoft_uninstall") ?>
             <?php if(GFCommon::current_user_can_any("gravityforms_infusionsoft_uninstall")){ ?>
