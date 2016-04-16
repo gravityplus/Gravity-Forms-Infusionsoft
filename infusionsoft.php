@@ -353,7 +353,7 @@ EOD;
         <form method="post" action="<?php echo esc_url( remove_query_arg(array('refresh', 'retrieveListNames', '_wpnonce')) ); ?>" id="gform-settings">
             <?php wp_nonce_field("update", "gf_infusionsoft_update") ?>
 
-            <h3><span><?php esc_html_e("Infusionsoft Account Information", "gravity-forms-infusionsoft") ?></span></h3>
+            <h3><span style="line-height: 38px"><img src="<?php echo esc_attr( plugins_url( 'images/icon.png', __FILE__ ) ); ?>" width="38" height="38" alt="" style="float:left;" /><?php esc_html_e("Infusionsoft Settings", "gravity-forms-infusionsoft") ?></span></h3>
 
 		<div class="gaddon-section gaddon-first-section">
             <table class="form-table gforms_form_settings">
