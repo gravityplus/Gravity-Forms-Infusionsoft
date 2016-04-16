@@ -189,9 +189,9 @@ class GFInfusionsoft {
                 $message .= __(sprintf('%sGravity Forms is installed but not active. %sActivate Gravity Forms%s to use the %s plugin.%s', '<p>', '<strong><a href="'.wp_nonce_url(admin_url('plugins.php?action=activate&plugin=gravityforms/gravityforms.php'), 'activate-plugin_gravityforms/gravityforms.php').'">', '</a></strong>', $name,'</p>'), 'gravity-forms-infusionsoft');
             } else {
                 $message .= <<<EOD
-<p><a href="http://katz.si/gravityforms?con=banner" title="Gravity Forms Contact Form Plugin for WordPress"><img src="http://gravityforms.s3.amazonaws.com/banners/728x90.gif" alt="Gravity Forms Plugin for WordPress" width="728" height="90" style="border:none;" /></a></p>
-        <h3><a href="http://katz.si/gravityforms" target="_blank">Gravity Forms</a> is required for the $name</h3>
-        <p>You do not have the Gravity Forms plugin installed. <a href="http://katz.si/gravityforms">Get Gravity Forms</a> today.</p>
+<p><a href="https://katz.si/gravityforms?con=banner" title="Gravity Forms Contact Form Plugin for WordPress"><img src="http://gravityforms.s3.amazonaws.com/banners/728x90.gif" alt="Gravity Forms Plugin for WordPress" width="728" height="90" style="border:none;" /></a></p>
+        <h3><a href="https://katz.si/gravityforms" target="_blank">Gravity Forms</a> is required for the $name</h3>
+        <p>You do not have the Gravity Forms plugin installed. <a href="https://katz.si/gravityforms">Get Gravity Forms</a> today.</p>
 EOD;
             }
 
@@ -206,7 +206,7 @@ EOD;
 
     public static function plugin_row(){
         if(!self::is_gravityforms_supported()){
-            $message = sprintf(__("%sGravity Forms%s is required. %sPurchase it today!%s", 'gravity-forms-infusionsoft'), "<a href='http://katz.si/gravityforms'>", "</a>", "<a href='http://katz.si/gravityforms'>", "</a>");
+            $message = sprintf(__("%sGravity Forms%s is required. %sPurchase it today!%s", 'gravity-forms-infusionsoft'), "<a href='https://katz.si/gravityforms'>", "</a>", "<a href='https://katz.si/gravityforms'>", "</a>");
             self::display_plugin_message($message, true);
         }
     }
@@ -422,13 +422,13 @@ EOD;
 
         ?>
         <div class="wrap">
-            <a href="http://katz.si/inhome"><img alt="<?php _e("Infusionsoft Feeds", "gravity-forms-infusionsoft") ?>" src="<?php echo self::get_base_url()?>/images/infusion-logo.png" style="margin:15px 7px 0 0; display:block;" width="200" height="33" /></a>
+            <a href="https://katz.si/inhome"><img alt="<?php _e("Infusionsoft Feeds", "gravity-forms-infusionsoft") ?>" src="<?php echo self::get_base_url()?>/images/infusion-logo.png" style="margin:15px 7px 0 0; display:block;" width="200" height="33" /></a>
             <h2><?php _e("Infusionsoft Feeds", "gravity-forms-infusionsoft"); ?>
             <a class="button add-new-h2" href="admin.php?page=gf_infusionsoft&view=edit&id=0"><?php _e("Add New", "gravity-forms-infusionsoft") ?></a>
             </h2>
 
             <div class="updated" id="message" style="margin-top:20px;">
-                <p><?php _e('Do you like this free plugin? <a href="http://katz.si/gfratein">Please review it on WordPress.org</a>! <small class="description alignright">Note: You must be logged in to WordPress.org to leave a review!</small>', 'gravity-forms-infusionsoft'); ?></p>
+                <p><?php _e('Do you like this free plugin? <a href="https://katz.si/gfratein">Please review it on WordPress.org</a>! <small class="description alignright">Note: You must be logged in to WordPress.org to leave a review!</small>', 'gravity-forms-infusionsoft'); ?></p>
             </div>
 
             <div class="clear"></div>
@@ -559,11 +559,11 @@ EOD;
 
         if(empty($appname) && empty($key)) {
             $message = wpautop(sprintf(__('
-            <a href="http://katz.si/inhome"><img alt="Infusionsoft Logo" src="%s" style="display:block; margin:15px 7px 0 0;" width="200" height="33"/></a>
-            <h3>Don\'t have an <a href="http://katz.si/inhome">Infusionsoft</a> account?</h3>
+            <a href="https://katz.si/inhome"><img alt="Infusionsoft Logo" src="%s" style="display:block; margin:15px 7px 0 0;" width="200" height="33"/></a>
+            <h3>Don\'t have an <a href="https://katz.si/inhome">Infusionsoft</a> account?</h3>
             This plugin requires an Infusionsoft account. If you have an Infusionsoft account, fill out the settings form below. Otherwise, you should sign up for an Infusionsoft account and start taking advantage of the world\'s best CRM.
 
-            <a href="http://katz.si/indemo" class="button button-primary">Sign up for Infusionsoft Today!</a> <a href="http://katz.si/inhome" class="button button-secondary">Visit Infusionsoft.com</a>
+            <a href="https://katz.si/indemo" class="button button-primary">Sign up for Infusionsoft Today!</a> <a href="https://katz.si/inhome" class="button button-secondary">Visit Infusionsoft.com</a>
             ', 'gravity-forms-infusionsoft'), self::get_base_url().'/images/infusion-logo.png'));
             $works = false;
             $class = 'updated';
@@ -660,7 +660,7 @@ EOD;
             var form = Array();
         </script>
         <div class="wrap">
-            <a href="http://katz.si/inhome"><img alt="<?php _e("Infusionsoft Feeds", "gravity-forms-infusionsoft") ?>" src="<?php echo self::get_base_url()?>/images/infusion-logo.png" style="display:block; margin:15px 7px 0 0;" width="200" height="33"/></a>
+            <a href="https://katz.si/inhome"><img alt="<?php _e("Infusionsoft Feeds", "gravity-forms-infusionsoft") ?>" src="<?php echo self::get_base_url()?>/images/infusion-logo.png" style="display:block; margin:15px 7px 0 0;" width="200" height="33"/></a>
             <h2><?php _e("Infusionsoft Feeds", "gravity-forms-infusionsoft"); ?></h2>
             <ul class="subsubsub">
                 <li><a href="<?php echo admin_url('admin.php?page=gf_settings&addon=Infusionsoft'); ?>"><?php _e('Infusionsoft Settings', 'gravity-forms-infusionsoft'); ?></a> |</li>
