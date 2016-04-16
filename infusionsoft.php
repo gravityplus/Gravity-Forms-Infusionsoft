@@ -206,7 +206,7 @@ EOD;
 
     public static function plugin_row(){
         if(!self::is_gravityforms_supported()){
-            $message = sprintf(__("%sGravity Forms%s is required. %sPurchase it today!%s"), "<a href='http://katz.si/gravityforms'>", "</a>", "<a href='http://katz.si/gravityforms'>", "</a>");
+            $message = sprintf(__("%sGravity Forms%s is required. %sPurchase it today!%s", 'gravity-forms-infusionsoft'), "<a href='http://katz.si/gravityforms'>", "</a>", "<a href='http://katz.si/gravityforms'>", "</a>");
             self::display_plugin_message($message, true);
         }
     }
@@ -955,7 +955,7 @@ EOD;
 
                                         </div>
                                         <div class="infusionsoft_optin_condition_message" <?php echo !empty($selection_fields) ? "style='display:none'" : ""?>>
-                                            <?php _e("To create an Opt-In condition, your form must have a drop down, checkbox or multiple choice field.", "gravityform") ?>
+                                            <?php _e("To create an Opt-In condition, your form must have a drop down, checkbox or multiple choice field.", "gravityform", 'gravity-forms-infusionsoft') ?>
                                         </div>
                                     </div>
                                 </td>
@@ -1740,7 +1740,7 @@ EOD;
         // Old version
         if(!function_exists('gform_update_meta')) { return; }
 
-        @RGFormsModel::add_note($entry['id'], $current_user->ID, $current_user->display_name, stripslashes(sprintf(__('Added or Updated on Infusionsoft. Contact ID: #%d. View entry at %s', 'gravity-forms-addons'), $contact_id, self::get_contact_url($contact_id))));
+        @RGFormsModel::add_note($entry['id'], $current_user->ID, $current_user->display_name, stripslashes(sprintf(__('Added or Updated on Infusionsoft. Contact ID: #%d. View entry at %s', 'gravity-forms-addons', 'gravity-forms-infusionsoft'), $contact_id, self::get_contact_url($contact_id))));
 
         @gform_update_meta($entry['id'], 'infusionsoft_id', $contact_id);
 
