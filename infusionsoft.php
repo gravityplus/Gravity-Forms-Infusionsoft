@@ -1020,15 +1020,10 @@ EOD;
     jQuery(document).ready(function($) {
 
     <?php if(isset($_REQUEST['id'])) { ?>
-        $('#infusionsoft_field_list').live('load', function() {
+        $('#infusionsoft_field_list').on('load', function() {
             $('.infusionsoft_field_cell select').each(function() {
                 var $select = $(this);
-                if($().prop) {
-                    var label = $.trim($('label[for='+$(this).prop('name')+']').text());
-                } else {
-                    var label = $.trim($('label[for='+$(this).attr('name')+']').text());
-                }
-                label = label.replace(' *', '');
+                var label = $.trim($('label[for='+$(this).prop('name')+']').text()).replace(' *', '');
 
                 if($select.val() === '') {
                     $('option', $select).each(function() {
