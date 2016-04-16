@@ -829,10 +829,10 @@ EOD;
                 </div>
 
 
-            <div id="infusionsoft_tags_optin_container" valign="top" class="margin_vertical_10">
+            <div id="infusionsoft_tags_optin_container" valign="top" class="margin_vertical_10 ginput_container ginput_container_list ginput_list">
                     <label for="infusionsoft_tag_optin" class="left_header"><?php _e("Conditionally Added Tags", "gravity-forms-infusionsoft"); ?> <?php gform_tooltip("infusionsoft_tag_optin_condition") ?></label>
                     <div id="infusionsoft_tag_optin">
-                        <table cellpadding="0" cellspacing="0">
+                        <table class="gfield_list gfield_list_container" cellpadding="0" cellspacing="0">
                             <tr>
                                 <td>
                                     <input type="checkbox" id="infusionsoft_tag_optin_enable" name="infusionsoft_tag_optin_enable" value="1" onclick="if(this.checked){jQuery('#infusionsoft_tag_optin_condition_field_container').show('slow'); SetOptin('','', 0); } else{jQuery('#infusionsoft_tag_optin_condition_field_container').hide('slow');}" <?php echo !empty($config["meta"]["tag_optin_enabled"]) ? "checked='checked'" : ""?>/>
@@ -866,7 +866,7 @@ EOD;
                                                     }
 
                                                     $list .= "
-                                            <tr class='gfield_list_row gfield_list_row_{$odd_even}' id='gfield_list_row_{$key}' data-fieldid='{$key}'>
+                                            <tr class='gfield_list_row gfield_list_row_{$odd_even} gfield_list_group' id='gfield_list_row_{$key}' data-fieldid='{$key}'>
                                                 <td class='gfield_list_cell'>
 
                                                     <div class='infusionsoft_tag_optin_condition_fields infusionsoft_optin_condition_fields'";
