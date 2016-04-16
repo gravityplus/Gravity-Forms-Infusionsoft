@@ -1,10 +1,10 @@
 === Infusionsoft Gravity Forms Add-on ===
-Tags: gravity forms, forms, gravity, form, crm, gravity form, infusionsoft,  Infusion Soft, small business, business, marketing, e-commerce
+Tags: Gravity Forms, Infusionsoft, CRM
 Requires at least: 3.3
-Tested up to: 4.0
-Stable tag: 1.5.10
+Tested up to: 4.5
+Stable tag: 1.5.12
 Contributors: katzwebdesign, katzwebservices
-Donate link:https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=zackkatz%40gmail%2ecom&item_name=Gravity%20Forms%20Infusionsoft&no_shipping=0&no_note=1&tax=0&currency_code=USD&lc=US&bn=PP%2dDonationsBF&charset=UTF%2d8
+Donate link: https://gravityview.co/?utm_source=wordpress&utm_medium=readme&utm_campaign=infusionsoft&utm_content=Donate
 
 Integrate the remarkable Gravity Forms plugin with Infusionsoft.
 
@@ -52,9 +52,6 @@ If you're interested in having this functionality, <strong>leave us a note in th
 
 == Frequently Asked Questions ==
 
-= How do I translate the plugin?
-We'd love to support your language. Please [translate the plugin here](https://www.transifex.com/projects/p/gravity-forms-infusionsoft/)!
-
 = Does this plugin require Infusionsoft? =
 Well of course it does.
 
@@ -62,6 +59,21 @@ Well of course it does.
 This plugin is released under a GPL license.
 
 == Changelog ==
+
+= 1.5.12 on April 16, 2016 =
+
+This is one of the last updates before a major re-write, coming later this year.
+
+* Fixed potential XSS security issue. __Please update.__
+* Fixed deprecated jQuery Javascript (convert `live()` to `on()`)
+* Fixed link to "Learn how to find your API key" doc
+* Fixed not being able to remove Conditional Tags
+* Fixed styling of the settings screen
+* Sanitized text and URLs
+* Improved translation strings
+
+= 1.5.11 on September 12, 2014 =
+* Fixed potential security issue. __Please update.__
 
 = 1.5.10 on September 12, 2014 =
 * Infusionsoft updated their SSL provider. The plugin has updated a file to match their security settings.
@@ -182,137 +194,6 @@ This plugin is released under a GPL license.
 
 = 1.3 =
 * Added support for tagging leads on a per-form basis.
-
-= 1.2.1 =
-* I forgot to actually update the file! This update actually adds support for Contact custom fields.
-
-= 1.2 =
-* Added support for Contact custom fields.
-
-= 1.0 =
-* Liftoff!
-
-== Upgrade Notice ==
-
-= 1.5.9.6 on August 19, 2014 =
-* Added: 'gf_infusionsoft_radio_value' filter to allow radio field value manipulation before sending it to Infusionsoft.
-
-= 1.5.9.5 on June 15, 2014 =
-* Fixed: Cast Number field type before sending it to Infusionsoft
-
-= 1.5.9.4 on June 11, 2014 =
-* Fixed: blank screen when no email is defined.
-* Fixed: Opt In condition value not showing correctly on feed edit screen.
-
-= 1.5.9.3 on May 27, 2014 =
-* Fixes custom fields update if Yes/No custom field is present
-
-= 1.5.9.2 on May 22, 2014 =
-* Include again the Quiz Add-on Fields (from version 1.5.8)
-
-= 1.5.9 & 1.5.9.1 on May 15, 2014 =
-* Fixed: Fetching tags now starts on page 1, not page 2
-* Fixed: Path to translations file
-* Fixed: PHP notice for calling non-static method statically
-* Fixed: SSL issue [as reported here](http://wordpress.org/support/topic/plugin-breaks-on-ssl)
-
-= 1.5.8.1 on May 1, 2014 =
-* Added: Support for mapping Quiz Add-On fields for a feeds
-* Modified: Changed default number of tags to get from Infusionsoft from 3,000 to 4,000.
-* Added: `gf_infusionsoft_max_number_of_tags` filter to allow developers to change how many tags to fetch from Infusionsoft (returns `int`, `4000` default)
-
-= 1.5.8.1 on April 7, 2014 =
-* Added: Enable the Quiz add-on fields on the feeds' opt-in conditions
-* Fixed: updated hook gform_post_submission (deprecated) to gform_after_submission
-
-= 1.5.8 on April 3, 2014 =
-* Added: Enable the Quiz add-on fields on the feeds
-
-= 1.5.7.2 =
-* Added: Enable debug logging using Gravity Forms Logging Add-on
-
-= 1.5.7.1 =
-* Fixes PHP warning related with unkonw form_id index on line 772
-* Fixes "Refresh Fields & Tags" link after saving feed - avoid feed duplication
-
-= 1.5.7 =
-* Added: `gravity_forms_infusionsoft_max_opt_in_conditions` filter to allow for a custom number of conditional opt-ins (default: 100).
-* Fixed: Potential XSS security issue
-
-= 1.5.6 =
-* Fixed: More PHP warnings
-* Modified: Increased the tag limit from 1,000 to 3,000
-
-= 1.5.5 =
-* Fixed: PHP warnings
-
-= 1.5.4.2 =
-* Fixed: Newly added "Conditionally Added Tags" would not save when added until saving the form first.
-
-= 1.5.4.1 =
-* Fixed: Removed limit to the number of conditional tag
-
-= 1.5.4 =
-* Fixed: Infusionsoft SDK conflicts with other plugins using the `xmlrpc` library.
-
-= 1.5.3 =
-* Fixed: Endlessly spinning on "Select the form to tap into."
-* Fixed: Compatibility with Gravity Forms 1.7.7
-* Improved: Updated to the latest <a href="https://github.com/joeynovak/infusionsoft-php-sdk">Infusionsoft SDK</a>
-
-= 1.5.2 =
-* Fixed: Conditional Tagging for checkbox fields (previously only worked with radio and select field types)
-
-= 1.5.1 =
-* Fixed: Some of the drop-down Conditional Tagging fields were still mis-behaving.
-
-= 1.5 =
-* Added: Notes are now added to entries with a link to the Contact's Infusionsoft URL. Also, find a neat link under "Info" box when viewing the Entry.
-* Added: Conditional Tags are now available before saving a form
-* Fixed: A few issues with Conditional Tags not respecting conditions
-* Fixed: Admin issue caused when duplicating or removing Conditional Tags conditions.
-
-= 1.4.1.2 =
-* Fixed: Tooltip issue, which caused switching forms to break
-
-= 1.4.1.1 =
-* Added max-height to tag conditions
-
-= 1.4.1 =
-* Fixed JavaScript alerts
-* Improved tooltip text and Tag descriptions
-
-= 1.4 =
-* Added really cool new feature: Conditional Tagging: add tags based on form responses!
-* Added Edit Form and Preview Form to Feed list
-* Actually implemented debugging form submission for Admins - previously, the checkbox didn't actually do anything!
-* Fixed some PHP Warnings
-
-= 1.3.4 =
-* Fixed issue with "Invalid byte 1 of 1-byte UTF-8 sequence" bug (<a href="http://wordpress.org/support/topic/copy-and-pasting-into-text-area-results-in-error?">as reported</a>) caused by pasting text into fields
-* Fixed formatting for pasting from Microsoft Word
-* Fixed conflict with other Infusionsoft WordPress plugin
-* Fixed date field not sending properly, <a href="http://wordpress.org/support/topic/custom-date-field-not-updating-for-existing-contacts?replies=1">as reported</a>
-* Fixed empty date fields sending Unix Epoch date (1970)
-* Made date field compatible with Infusionsoft servers (Eastern time)
-
-= 1.3.3.1 =
-* Fixed issue with <a href="http://wordpress.org/support/topic/first-argument-is-expected-to-be-a-valid-callback">`check_update` issue</a>
-* May also fix issue where link to settings page is not visible.
-
-= 1.3.3 =
-* Fixed issue with field caching introduced in 1.3.2
-
-= 1.3.2 =
-* Fixed errors caused by tags with non-alphanumeric characters in it
-* Improved tag layout for accounts with lots of tags
-* Added caching for fields so if you're setting up multiple forms in a day, it'll load the fields much faster.
-
-= 1.3.1 =
-* Fixes date formatting for date fields other than Birthday
-
-= 1.3 =
-* Added support for tagging leads on a per-form basis. Thanks to <a href="http://www.PixelLeverage.com">PixelLeverage.com</a> for sponsoring this feature.
 
 = 1.2.1 =
 * I forgot to actually update the file! This update actually adds support for Contact custom fields.

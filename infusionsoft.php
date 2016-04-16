@@ -3,14 +3,14 @@
 Plugin Name: Gravity Forms Infusionsoft Add-On
 Plugin URI: http://katz.co
 Description: Integrates Gravity Forms with Infusionsoft allowing form submissions to be automatically sent to your Infusionsoft account
-Version: 1.5.10
+Version: 1.5.12
 Author: Katz Web Services, Inc.
-Author URI: http://www.katzwebservices.com
+Author URI: https://www.katzwebservices.com
 Text Domain: gravity-forms-infusionsoft
 Domain Path: /languages
 
 ------------------------------------------------------------------------
-Copyright 2014 Katz Web Services, Inc.
+Copyright 2016 Katz Web Services, Inc.
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ class GFInfusionsoft {
     private static $path = "gravity-forms-infusionsoft/infusionsoft.php";
     private static $url = "http://www.gravityforms.com";
     private static $slug = "gravity-forms-infusionsoft";
-    private static $version = "1.5.10";
+    private static $version = "1.5.12";
     private static $min_gravityforms_version = "1.3.9";
     private static $is_debug = NULL;
     private static $debug_js = false;
@@ -154,22 +154,21 @@ class GFInfusionsoft {
                 var is_active = img.src.indexOf("active1.png") >=0
                 if(is_active){
                     img.src = img.src.replace("active1.png", "active0.png");
-                    jQuery(img).attr('title','<?php _e("Inactive", "gravity-forms-infusionsoft") ?>').attr('alt', '<?php _e("Inactive", "gravity-forms-infusionsoft") ?>');
+                    jQuery(img).attr('title','<?php echo esc_js( __("Inactive", "gravity-forms-infusionsoft") ); ?>').attr('alt', '<?php echo esc_js( __("Inactive", "gravity-forms-infusionsoft") ); ?>');
                 }
                 else{
                     img.src = img.src.replace("active0.png", "active1.png");
-                    jQuery(img).attr('title','<?php _e("Active", "gravity-forms-infusionsoft") ?>').attr('alt', '<?php _e("Active", "gravity-forms-infusionsoft") ?>');
+                    jQuery(img).attr('title','<?php echo esc_js( __("Active", "gravity-forms-infusionsoft") ); ?>').attr('alt', '<?php echo esc_js( __("Active", "gravity-forms-infusionsoft") ); ?>');
                 }
 
-                var mysack = new sack("<?php echo admin_url("admin-ajax.php")?>" );
+                var mysack = new sack("<?php echo esc_js( admin_url("admin-ajax.php") ); ?>" );
                 mysack.execute = 1;
                 mysack.method = 'POST';
                 mysack.setVar( "action", "rg_update_feed_active" );
                 mysack.setVar( "rg_update_feed_active", "<?php echo wp_create_nonce("rg_update_feed_active") ?>" );
                 mysack.setVar( "feed_id", feed_id );
                 mysack.setVar( "is_active", is_active ? 0 : 1 );
-                mysack.encVar( "cookie", document.cookie, false );
-                mysack.onError = function() { alert('<?php _e("Ajax error while updating feed", "gravity-forms-infusionsoft" ) ?>' )};
+                mysack.onError = function() { alert('<?php echo esc_js( __("Ajax error while updating feed", "gravity-forms-infusionsoft" ) ); ?>' )};
                 mysack.runAJAX();
 
                 return true;
@@ -186,12 +185,12 @@ class GFInfusionsoft {
         if(!class_exists('RGForms')) {
             if(file_exists(WP_PLUGIN_DIR.'/gravityforms/gravityforms.php')) {
                 $installed = 1;
-                $message .= __(sprintf('%sGravity Forms is installed but not active. %sActivate Gravity Forms%s to use the %s plugin.%s', '<p>', '<strong><a href="'.wp_nonce_url(admin_url('plugins.php?action=activate&plugin=gravityforms/gravityforms.php'), 'activate-plugin_gravityforms/gravityforms.php').'">', '</a></strong>', $name,'</p>'), 'gravity-forms-infusionsoft');
+                $message .= sprintf( esc_attr__('%sGravity Forms is installed but not active. %sActivate Gravity Forms%s to use the %s plugin.%s', 'gravity-forms-infusionsoft' ), '<p>', '<strong><a href="'.wp_nonce_url(admin_url('plugins.php?action=activate&plugin=gravityforms/gravityforms.php'), 'activate-plugin_gravityforms/gravityforms.php').'">', '</a></strong>', esc_html( $name ),'</p>');
             } else {
                 $message .= <<<EOD
-<p><a href="http://katz.si/gravityforms?con=banner" title="Gravity Forms Contact Form Plugin for WordPress"><img src="http://gravityforms.s3.amazonaws.com/banners/728x90.gif" alt="Gravity Forms Plugin for WordPress" width="728" height="90" style="border:none;" /></a></p>
-        <h3><a href="http://katz.si/gravityforms" target="_blank">Gravity Forms</a> is required for the $name</h3>
-        <p>You do not have the Gravity Forms plugin installed. <a href="http://katz.si/gravityforms">Get Gravity Forms</a> today.</p>
+<p><a href="https://katz.si/gravityforms?con=banner" title="Gravity Forms Contact Form Plugin for WordPress"><img src="http://gravityforms.s3.amazonaws.com/banners/728x90.gif" alt="Gravity Forms Plugin for WordPress" width="728" height="90" style="border:none;" /></a></p>
+        <h3><a href="https://katz.si/gravityforms" target="_blank">Gravity Forms</a> is required for the $name</h3>
+        <p>You do not have the Gravity Forms plugin installed. <a href="https://katz.si/gravityforms">Get Gravity Forms</a> today.</p>
 EOD;
             }
 
@@ -206,7 +205,7 @@ EOD;
 
     public static function plugin_row(){
         if(!self::is_gravityforms_supported()){
-            $message = sprintf(__("%sGravity Forms%s is required. %sPurchase it today!%s"), "<a href='http://katz.si/gravityforms'>", "</a>", "<a href='http://katz.si/gravityforms'>", "</a>");
+            $message = sprintf(esc_html__("%sGravity Forms%s is required. %sPurchase it today!%s", 'gravity-forms-infusionsoft'), "<a href='https://katz.si/gravityforms'>", "</a>", "<a href='https://katz.si/gravityforms'>", "</a>");
             self::display_plugin_message($message, true);
         }
     }
@@ -233,9 +232,9 @@ EOD;
         static $this_plugin;
         if( ! $this_plugin ) $this_plugin = plugin_basename(__FILE__);
         if ( $file == $this_plugin ) {
-            $settings_link = '<a href="' . admin_url( 'admin.php?page=gf_infusionsoft' ) . '" title="' . __('Select the Gravity Form you would like to integrate with Infusionsoft. Contacts generated by this form will be automatically added to your Infusionsoft account.', 'gravity-forms-infusionsoft') . '">' . __('Feeds', 'gravity-forms-infusionsoft') . '</a>';
+            $settings_link = '<a href="' . esc_url( admin_url( 'admin.php?page=gf_infusionsoft' ) ) . '" title="' . esc_attr__('Select the Gravity Form you would like to integrate with Infusionsoft. Contacts generated by this form will be automatically added to your Infusionsoft account.', 'gravity-forms-infusionsoft') . '">' . esc_attr__('Feeds', 'gravity-forms-infusionsoft') . '</a>';
             array_unshift( $links, $settings_link ); // before other links
-            $settings_link = '<a href="' . admin_url( 'admin.php?page=gf_settings&addon=Infusionsoft' ) . '" title="' . __('Configure your Infusionsoft settings.', 'gravity-forms-infusionsoft') . '">' . __('Settings', 'gravity-forms-infusionsoft') . '</a>';
+            $settings_link = '<a href="' . esc_url( admin_url( 'admin.php?page=gf_settings&addon=Infusionsoft' ) ) . '" title="' . esc_attr__('Configure your Infusionsoft settings.', 'gravity-forms-infusionsoft') . '">' . esc_attr__('Settings', 'gravity-forms-infusionsoft') . '</a>';
             array_unshift( $links, $settings_link ); // before other links
         }
         return $links;
@@ -273,12 +272,12 @@ EOD;
     //Adds feed tooltips to the list of tooltips
     public static function tooltips($tooltips){
         $infusionsoft_tooltips = array(
-            "infusionsoft_contact_list" => "<h6>" . __("Infusionsoft List", "gravity-forms-infusionsoft") . "</h6>" . __("Select the Infusionsoft list you would like to add your contacts to.", "gravity-forms-infusionsoft"),
-            "infusionsoft_gravity_form" => "<h6>" . __("Gravity Form", "gravity-forms-infusionsoft") . "</h6>" . __("Select the Gravity Form you would like to integrate with Infusionsoft. Contacts generated by this form will be automatically added to your Infusionsoft account.", "gravity-forms-infusionsoft"),
-            "infusionsoft_map_fields" => "<h6>" . __("Map Fields", "gravity-forms-infusionsoft") . "</h6>" . __("Associate your Infusionsoft attributes to the appropriate Gravity Form fields by selecting.", "gravity-forms-infusionsoft"),
-            "infusionsoft_optin_condition" => "<h6>" . __("Opt-In Condition", "gravity-forms-infusionsoft") . "</h6>" . __("When the opt-in condition is enabled, form submissions will only be exported to Infusionsoft when the condition is met. When disabled all form submissions will be exported.", "gravity-forms-infusionsoft"),
-            "infusionsoft_tag" => "<h6>" . __("Entry Tags", "gravity-forms-infusionsoft") . "</h6>" . __("Add these tags to every entry (in addition to any conditionally added tags below).", "gravity-forms-infusionsoft"),
-            "infusionsoft_tag_optin_condition" => "<h6>" . __("Conditionally Added Tags", "gravity-forms-infusionsoft") . "</h6>" . __("Tags will be added to the entry when the conditions specified are met. Does not override the 'Entry Tags' setting above (which are applied to all entries).", "gravity-forms-infusionsoft"),
+            "infusionsoft_contact_list" => "<h6>" . esc_attr__("Infusionsoft List", "gravity-forms-infusionsoft") . "</h6>" . __("Select the Infusionsoft list you would like to add your contacts to.", "gravity-forms-infusionsoft"),
+            "infusionsoft_gravity_form" => "<h6>" . esc_attr__("Gravity Form", "gravity-forms-infusionsoft") . "</h6>" . esc_attr__("Select the Gravity Form you would like to integrate with Infusionsoft. Contacts generated by this form will be automatically added to your Infusionsoft account.", "gravity-forms-infusionsoft"),
+            "infusionsoft_map_fields" => "<h6>" . esc_attr__("Map Fields", "gravity-forms-infusionsoft") . "</h6>" . esc_attr__("Associate your Infusionsoft attributes to the appropriate Gravity Form fields by selecting.", "gravity-forms-infusionsoft"),
+            "infusionsoft_optin_condition" => "<h6>" . esc_attr__("Opt-In Condition", "gravity-forms-infusionsoft") . "</h6>" . esc_attr__("When the opt-in condition is enabled, form submissions will only be exported to Infusionsoft when the condition is met. When disabled all form submissions will be exported.", "gravity-forms-infusionsoft"),
+            "infusionsoft_tag" => "<h6>" . esc_attr__("Entry Tags", "gravity-forms-infusionsoft") . "</h6>" . esc_attr__("Add these tags to every entry (in addition to any conditionally added tags below).", "gravity-forms-infusionsoft"),
+            "infusionsoft_tag_optin_condition" => "<h6>" . esc_attr__("Conditionally Added Tags", "gravity-forms-infusionsoft") . "</h6>" . esc_attr__("Tags will be added to the entry when the conditions specified are met. Does not override the 'Entry Tags' setting above (which are applied to all entries).", "gravity-forms-infusionsoft"),
 
         );
         return array_merge($tooltips, $infusionsoft_tooltips);
@@ -290,7 +289,7 @@ EOD;
         // Adding submenu if user has access
         $permission = self::has_access("gravityforms_infusionsoft");
         if(!empty($permission))
-            $menus[] = array("name" => "gf_infusionsoft", "label" => __("Infusionsoft", "gravity-forms-infusionsoft"), "callback" =>  array("GFInfusionsoft", "infusionsoft_page"), "permission" => $permission);
+            $menus[] = array("name" => "gf_infusionsoft", "label" => esc_attr__("Infusionsoft", "gravity-forms-infusionsoft"), "callback" =>  array("GFInfusionsoft", "infusionsoft_page"), "permission" => $permission);
 
         return $menus;
     }
@@ -324,7 +323,7 @@ EOD;
             self::uninstall();
 
             ?>
-            <div class="updated fade" style="padding:20px;"><?php _e(sprintf("Gravity Forms Infusionsoft Add-On has been successfully uninstalled. It can be re-activated from the %splugins page%s.", "<a href='plugins.php'>","</a>"), "gravity-forms-infusionsoft")?></div>
+            <div class="updated fade" style="padding:20px;"><?php printf( esc_html__("Gravity Forms Infusionsoft Add-On has been successfully uninstalled. It can be re-activated from the %splugins page%s.", "gravity-forms-infusionsoft"), "<a href='" . esc_url( admin_url( 'plugins.php' ) ) . "'>","</a>"); ?></div>
             <?php
             return;
         }
@@ -344,39 +343,50 @@ EOD;
         $valid = self::test_api(true);
 
 ?>
-
-        <form method="post" action="<?php echo remove_query_arg(array('refresh', 'retrieveListNames', '_wpnonce')); ?>" class="alignleft" style="width:60%;">
+        <form method="post" action="<?php echo esc_url( remove_query_arg(array('refresh', 'retrieveListNames', '_wpnonce')) ); ?>" id="gform-settings">
             <?php wp_nonce_field("update", "gf_infusionsoft_update") ?>
 
-            <h2><?php _e("Infusionsoft Account Information", "gravity-forms-infusionsoft") ?></h2>
+            <h3><span style="line-height: 38px"><img src="<?php echo esc_attr( plugins_url( 'images/icon.png', __FILE__ ) ); ?>" width="38" height="38" alt="" style="float:left;" /><?php esc_html_e("Infusionsoft Settings", "gravity-forms-infusionsoft") ?></span></h3>
 
-            <table class="form-table">
-                <tr>
-                    <th scope="row"><label for="gf_infusionsoft_key"><?php _e("Infusionsoft API Key", "gravity-forms-infusionsoft"); ?></label><span class="howto"><a href="http://ug.infusionsoft.com/article/AA-00442/0/How-do-I-enable-the-Infusionsoft-API-and-generate-an-API-Key.html"><?php _e("Learn how to find your API key", 'gravity-forms-infusionsoft'); ?></a></th>
-                    <td><input type="text" id="gf_infusionsoft_key" style="padding:5px 5px 3px;" class="code" name="gf_infusionsoft_key" size="80" value="<?php echo empty($settings["key"]) ? '' : esc_attr($settings["key"]); ?>"/></td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="gf_infusionsoft_appname"><?php _e("Infusionsoft Account Subdomain", "gravity-forms-infusionsoft"); ?></label> </th>
-                    <td><input type="text" id="gf_infusionsoft_appname" name="gf_infusionsoft_appname" size="30" value="<?php echo empty($settings["appname"]) ? '' : esc_attr($settings["appname"]); ?>"/></td>
-                </tr>
-                <tr>
-                    <th scope="row"><label for="gf_infusionsoft_debug"><?php _e("Debug Form Submissions for Administrators", "gravity-forms-infusionsoft"); ?></label> </th>
-                    <td><input type="checkbox" id="gf_infusionsoft_debug" name="gf_infusionsoft_debug" value="1" <?php checked($settings["debug"], true); ?>/></td>
-                </tr>
-                <tr>
-                    <td colspan="2" ><input type="submit" name="gf_infusionsoft_submit" class="button-primary" value="<?php _e("Save Settings", "gravity-forms-infusionsoft") ?>" /></td>
-                </tr>
+		<div class="gaddon-section gaddon-first-section">
+			<h4 class="gaddon-section-title gf_settings_subgroup_title"><?php esc_html_e('Infusionsoft Account Information', 'gravity-forms-infusionsoft'); ?></h4>
 
+            <table class="form-table gforms_form_settings">
+	            <tbody>
+	                <tr>
+	                    <th scope="row"><label for="gf_infusionsoft_key"><?php esc_html_e("API Key", "gravity-forms-infusionsoft"); ?></label><span class="howto"><a href="http://help.infusionsoft.com/userguides/get-started/tips-and-tricks/api-key"><?php esc_html_e("Learn how to find your API key", 'gravity-forms-infusionsoft'); ?></a></th>
+	                    <td><input type="text" id="gf_infusionsoft_key" style="padding:5px 5px 3px;" class="code" placeholder="<?php printf( esc_attr('example: %s', "gravity-forms-infusionsoft" ), 'otj4nlqbbkfttj81wx91119mr1j5g1ga7ttatzo71am3z9g8gkv24dn9ugaiphjb' ); ?>" name="gf_infusionsoft_key" size="68" value="<?php echo empty($settings["key"]) ? '' : esc_attr($settings["key"]); ?>"/></td>
+	                </tr>
+	                <tr>
+	                    <th scope="row"><label for="gf_infusionsoft_appname"><?php esc_html_e("Account Subdomain", "gravity-forms-infusionsoft"); ?></label> </th>
+	                    <td><input type="text" class="code" id="gf_infusionsoft_appname" name="gf_infusionsoft_appname" size="10" placeholder="<?php printf( esc_attr('example: %s', "gravity-forms-infusionsoft" ), 'ab123' ); ?>" value="<?php echo empty($settings["appname"]) ? '' : esc_attr($settings["appname"]); ?>"/></td>
+	                </tr>
+				</tbody>
             </table>
+        </div>
+        <div class="gaddon-section">
+            <h4 class="gaddon-section-title gf_settings_subgroup_title"><?php esc_html_e('Debugging', 'gravity-forms-infusionsoft'); ?></h4>
+	        <table class="form-table gforms_form_settings">
+		        <tbody>
+		            <tr>
+	                    <th scope="row"><label for="gf_infusionsoft_debug"><?php esc_html_e("Debug Form Submissions", "gravity-forms-infusionsoft"); ?></label></th>
+	                    <td><span class="checkbox"><input type="checkbox" class="checkbox" id="gf_infusionsoft_debug" name="gf_infusionsoft_debug" value="1" <?php checked($settings["debug"], true); ?>/>  <?php esc_html_e('Dubugging messages will be shown only to Administrators', 'gravity-forms-infusionsoft'); ?></span></td>
+	                </tr>
+	                <tr>
+	                    <td colspan="2" ><input type="submit" name="gf_infusionsoft_submit" class="button button-large button-primary" value="<?php esc_html_e("Save Settings", "gravity-forms-infusionsoft") ?>" /></td>
+	                </tr>
+		       </tbody>
+	       </table>
+       </div>
         <form action="" method="post">
             <?php wp_nonce_field("uninstall", "gf_infusionsoft_uninstall") ?>
             <?php if(GFCommon::current_user_can_any("gravityforms_infusionsoft_uninstall")){ ?>
                 <div class="hr-divider"></div>
 
-                <h3><?php _e("Uninstall Infusionsoft Add-On", "gravity-forms-infusionsoft") ?></h3>
-                <div class="delete-alert"><?php _e("Warning! This operation deletes ALL Infusionsoft Feeds.", "gravity-forms-infusionsoft") ?>
+                <h3><?php esc_html_e("Uninstall Infusionsoft Add-On", "gravity-forms-infusionsoft") ?></h3>
+                <div class="delete-alert"><?php esc_html_e("Warning! This operation deletes ALL Infusionsoft Feeds.", "gravity-forms-infusionsoft") ?>
                     <?php
-                    $uninstall_button = '<input type="submit" name="uninstall" value="' . __("Uninstall Infusionsoft Add-On", "gravity-forms-infusionsoft") . '" class="button" onclick="return confirm(\'' . esc_js( __("Warning! ALL Infusionsoft Feeds will be deleted. This cannot be undone. 'OK' to delete, 'Cancel' to stop", "gravity-forms-infusionsoft") ) . '\');"/>';
+                    $uninstall_button = '<input type="submit" name="uninstall" value="' . esc_attr__("Uninstall Infusionsoft Add-On", "gravity-forms-infusionsoft") . '" class="button" onclick="return confirm(\'' . esc_js( __("Warning! ALL Infusionsoft Feeds will be deleted. This cannot be undone. 'OK' to delete, 'Cancel' to stop", "gravity-forms-infusionsoft") ) . '\');"/>';
                     echo apply_filters("gform_infusionsoft_uninstall_button", $uninstall_button);
                     ?>
                 </div>
@@ -396,7 +406,7 @@ EOD;
     //Displays the Infusionsoft feeds list page
     private static function list_page(){
         if(!self::is_gravityforms_supported()){
-            die(__(sprintf("The Infusionsoft Add-On requires Gravity Forms %s. Upgrade automatically on the %sPlugin page%s.", self::$min_gravityforms_version, "<a href='plugins.php'>", "</a>"), "gravity-forms-infusionsoft"));
+            die( sprintf( __("The Infusionsoft Add-On requires Gravity Forms %s. Upgrade automatically on the %sPlugin page%s.", "gravity-forms-infusionsoft"), self::$min_gravityforms_version, "<a href='plugins.php'>", "</a>") );
         }
 
         if(isset($_POST["action"]) && $_POST["action"] == "delete"){
@@ -405,7 +415,7 @@ EOD;
             $id = absint($_POST["action_argument"]);
             GFInfusionsoftData::delete_feed($id);
             ?>
-            <div class="updated fade" style="padding:6px"><?php _e("Feed deleted.", "gravity-forms-infusionsoft") ?></div>
+            <div class="updated fade" style="padding:6px"><?php esc_html_e("Feed deleted.", "gravity-forms-infusionsoft") ?></div>
             <?php
         }
         else if (!empty($_POST["bulk_action"])){
@@ -416,26 +426,26 @@ EOD;
                     GFInfusionsoftData::delete_feed($feed_id);
             }
             ?>
-            <div class="updated fade" style="padding:6px"><?php _e("Feeds deleted.", "gravity-forms-infusionsoft") ?></div>
+            <div class="updated fade" style="padding:6px"><?php esc_html_e("Feeds deleted.", "gravity-forms-infusionsoft") ?></div>
             <?php
         }
 
         ?>
         <div class="wrap">
-            <a href="http://katz.si/inhome"><img alt="<?php _e("Infusionsoft Feeds", "gravity-forms-infusionsoft") ?>" src="<?php echo self::get_base_url()?>/images/infusion-logo.png" style="margin:15px 7px 0 0; display:block;" width="200" height="33" /></a>
-            <h2><?php _e("Infusionsoft Feeds", "gravity-forms-infusionsoft"); ?>
-            <a class="button add-new-h2" href="admin.php?page=gf_infusionsoft&view=edit&id=0"><?php _e("Add New", "gravity-forms-infusionsoft") ?></a>
+            <a href="https://katz.si/inhome"><img alt="<?php esc_attr_e("Infusionsoft Feeds", "gravity-forms-infusionsoft") ?>" src="<?php echo self::get_base_url()?>/images/infusion-logo.png" style="margin:15px 7px 0 0; display:block;" width="200" height="33" /></a>
+            <h2><?php esc_html_e("Infusionsoft Feeds", "gravity-forms-infusionsoft"); ?>
+            <a class="button add-new-h2" href="admin.php?page=gf_infusionsoft&view=edit&id=0"><?php esc_html_e("Add New", "gravity-forms-infusionsoft") ?></a>
             </h2>
 
             <div class="updated" id="message" style="margin-top:20px;">
-                <p><?php _e('Do you like this free plugin? <a href="http://katz.si/gfratein">Please review it on WordPress.org</a>! <small class="description alignright">Note: You must be logged in to WordPress.org to leave a review!</small>', 'gravity-forms-infusionsoft'); ?></p>
+                <p><?php _e('Do you like this free plugin? <a href="https://katz.si/gfratein">Please review it on WordPress.org</a>! <small class="description alignright">Note: You must be logged in to WordPress.org to leave a review!</small>', 'gravity-forms-infusionsoft'); ?></p>
             </div>
 
             <div class="clear"></div>
 
             <ul class="subsubsub" style="margin-top:0;">
-                <li><a href="<?php echo admin_url('admin.php?page=gf_settings&addon=Infusionsoft'); ?>"><?php _e('Infusionsoft Settings', 'gravity-forms-infusionsoft'); ?></a> |</li>
-                <li><a href="<?php echo admin_url('admin.php?page=gf_infusionsoft'); ?>" class="current"><?php _e('Infusionsoft Feeds', 'gravity-forms-infusionsoft'); ?></a></li>
+                <li><a href="<?php echo esc_url( admin_url('admin.php?page=gf_settings&addon=Infusionsoft') ); ?>"><?php esc_html_e('Infusionsoft Settings', 'gravity-forms-infusionsoft'); ?></a> |</li>
+                <li><a href="<?php echo esc_url( admin_url('admin.php?page=gf_infusionsoft') ); ?>" class="current"><?php esc_html_e('Infusionsoft Feeds', 'gravity-forms-infusionsoft'); ?></a></li>
             </ul>
 
             <form id="feed_form" method="post">
@@ -445,13 +455,13 @@ EOD;
 
                 <div class="tablenav">
                     <div class="alignleft actions" style="padding:8px 0 7px; 0">
-                        <label class="hidden" for="bulk_action"><?php _e("Bulk action", "gravity-forms-infusionsoft") ?></label>
+                        <label class="hidden" for="bulk_action"><?php esc_html_e("Bulk action", "gravity-forms-infusionsoft") ?></label>
                         <select name="bulk_action" id="bulk_action">
-                            <option value=''> <?php _e("Bulk action", "gravity-forms-infusionsoft") ?> </option>
-                            <option value='delete'><?php _e("Delete", "gravity-forms-infusionsoft") ?></option>
+                            <option value=''> <?php esc_html_e("Bulk action", "gravity-forms-infusionsoft") ?> </option>
+                            <option value='delete'><?php esc_html_e("Delete", "gravity-forms-infusionsoft") ?></option>
                         </select>
                         <?php
-                        echo '<input type="submit" class="button" value="' . __("Apply", "gravity-forms-infusionsoft") . '" onclick="if( jQuery(\'#bulk_action\').val() == \'delete\' && !confirm(\'' . __("Delete selected feeds? ", "gravity-forms-infusionsoft") . esc_js( __("'Cancel' to stop, 'OK' to delete.", "gravity-forms-infusionsoft") ) .'\')) { return false; } return true;"/>';
+                        echo '<input type="submit" class="button" value="' . esc_attr__("Apply", "gravity-forms-infusionsoft") . '" onclick="if( jQuery(\'#bulk_action\').val() == \'delete\' && !confirm(\'' . esc_attr__("Delete selected feeds? ", "gravity-forms-infusionsoft") . esc_js( __("'Cancel' to stop, 'OK' to delete.", "gravity-forms-infusionsoft") ) .'\')) { return false; } return true;"/>';
                         ?>
                     </div>
                 </div>
@@ -460,7 +470,7 @@ EOD;
                         <tr>
                             <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><input type="checkbox" /></th>
                             <th scope="col" id="active" class="manage-column check-column"></th>
-                            <th scope="col" class="manage-column"><?php _e("Form", "gravity-forms-infusionsoft") ?></th>
+                            <th scope="col" class="manage-column"><?php esc_html_e("Form", "gravity-forms-infusionsoft") ?></th>
                         </tr>
                     </thead>
 
@@ -468,7 +478,7 @@ EOD;
                         <tr>
                             <th scope="col" id="cb" class="manage-column column-cb check-column" style=""><input type="checkbox" /></th>
                             <th scope="col" id="active" class="manage-column check-column"></th>
-                            <th scope="col" class="manage-column"><?php _e("Form", "gravity-forms-infusionsoft") ?></th>
+                            <th scope="col" class="manage-column"><?php esc_html_e("Form", "gravity-forms-infusionsoft") ?></th>
                         </tr>
                     </tfoot>
 
@@ -481,27 +491,27 @@ EOD;
                                 ?>
                                 <tr class='author-self status-inherit' valign="top">
                                     <th scope="row" class="check-column"><input type="checkbox" name="feed[]" value="<?php echo $setting["id"] ?>"/></th>
-                                    <td><img src="<?php echo self::get_base_url() ?>/images/active<?php echo intval($setting["is_active"]) ?>.png" alt="<?php echo $setting["is_active"] ? __("Active", "gravity-forms-infusionsoft") : __("Inactive", "gravity-forms-infusionsoft");?>" title="<?php echo $setting["is_active"] ? __("Active", "gravity-forms-infusionsoft") : __("Inactive", "gravity-forms-infusionsoft");?>" onclick="ToggleActive(this, <?php echo $setting['id'] ?>); " /></td>
+                                    <td><img src="<?php echo self::get_base_url() ?>/images/active<?php echo intval($setting["is_active"]) ?>.png" alt="<?php echo $setting["is_active"] ? esc_attr__("Active", "gravity-forms-infusionsoft") : esc_attr__("Inactive", "gravity-forms-infusionsoft");?>" title="<?php echo $setting["is_active"] ? esc_attr__("Active", "gravity-forms-infusionsoft") : esc_attr__("Inactive", "gravity-forms-infusionsoft");?>" onclick="ToggleActive(this, <?php echo $setting['id'] ?>); " /></td>
                                     <td class="column-title">
-                                        <a href="admin.php?page=gf_infusionsoft&amp;view=edit&amp;id=<?php echo $setting["id"] ?>" title="<?php _e("Edit", "gravity-forms-infusionsoft") ?>"><?php echo $setting["form_title"] ?></a>
+                                        <a href="admin.php?page=gf_infusionsoft&amp;view=edit&amp;id=<?php echo $setting["id"] ?>" title="<?php esc_attr_e("Edit", "gravity-forms-infusionsoft") ?>"><?php echo $setting["form_title"] ?></a>
                                         <div class="row-actions">
                                             <span class="edit">
-                                            <a title="Edit this setting" href="admin.php?page=gf_infusionsoft&amp;view=edit&amp;id=<?php echo $setting["id"] ?>" title="<?php _e("Edit", "gravity-forms-infusionsoft") ?>"><?php _e("Edit", "gravity-forms-infusionsoft") ?></a>
+                                            <a title="Edit this setting" href="admin.php?page=gf_infusionsoft&amp;view=edit&amp;id=<?php echo $setting["id"] ?>" title="<?php esc_attr_e("Edit", "gravity-forms-infusionsoft") ?>"><?php esc_html_e("Edit", "gravity-forms-infusionsoft") ?></a>
                                             |
                                             </span>
 
                                             <span class="edit">
-                                            <a title="<?php _e("Delete", "gravity-forms-infusionsoft") ?>" href="javascript: if(confirm('<?php echo esc_js( __( "Delete this feed? 'Cancel' to stop, 'OK' to delete.", "gravity-forms-infusionsoft") ); ?>')){ DeleteSetting(<?php echo $setting["id"] ?>);}"><?php _e("Delete", "gravity-forms-infusionsoft")?></a>
+                                            <a title="<?php esc_attr_e("Delete", "gravity-forms-infusionsoft") ?>" href="javascript: if(confirm('<?php echo esc_js( __( "Delete this feed? 'Cancel' to stop, 'OK' to delete.", "gravity-forms-infusionsoft") ); ?>')){ DeleteSetting(<?php echo $setting["id"] ?>);}"><?php esc_html_e("Delete", "gravity-forms-infusionsoft")?></a>
                                             |
                                             </span>
 
                                             <span class="edit">
-                                            <a title="<?php _e("Edit Form", "gravity-forms-infusionsoft") ?>" href="<?php echo add_query_arg(array('page' => 'gf_edit_forms', 'id' => $setting['form_id']), admin_url('admin.php')); ?>"><?php _e("Edit Form", "gravity-forms-infusionsoft")?></a>
+                                            <a title="<?php esc_attr_e("Edit Form", "gravity-forms-infusionsoft") ?>" href="<?php echo esc_url( add_query_arg(array('page' => 'gf_edit_forms', 'id' => $setting['form_id']), admin_url('admin.php')) ); ?>"><?php esc_html_e("Edit Form", "gravity-forms-infusionsoft")?></a>
                                             |
                                             </span>
 
                                             <span class="edit">
-                                            <a title="<?php _e("Preview Form", "gravity-forms-infusionsoft") ?>" href="<?php echo add_query_arg(array('gf_page' => 'preview', 'id' => $setting['form_id']), site_url()); ?>"><?php _e("Preview Form", "gravity-forms-infusionsoft")?></a>
+                                            <a title="<?php esc_attr_e("Preview Form", "gravity-forms-infusionsoft") ?>" href="<?php echo esc_url( add_query_arg(array('gf_page' => 'preview', 'id' => $setting['form_id']), site_url()) ); ?>"><?php esc_html_e("Preview Form", "gravity-forms-infusionsoft")?></a>
                                             </span>
                                         </div>
                                     </td>
@@ -514,16 +524,16 @@ EOD;
                             if(!empty($valid)){
                                 ?>
                                 <tr>
-                                    <td colspan="4" style="padding:20px;">
-                                        <?php _e(sprintf("You don't have any Infusionsoft feeds configured. Let's go %screate one%s!", '<a href="'.admin_url('admin.php?page=gf_infusionsoft&view=edit&id=0').'">', "</a>"), "gravity-forms-infusionsoft"); ?>
+                                    <td colspan="3" style="padding:20px;">
+                                        <?php printf( esc_html__("You don't have any Infusionsoft feeds configured. Let's go %screate one%s!", "gravity-forms-infusionsoft"), '<a href="'.esc_url( admin_url('admin.php?page=gf_infusionsoft&view=edit&id=0') ).'">', "</a>"); ?>
                                     </td>
                                 </tr>
                                 <?php
                             } else{
                                 ?>
                                 <tr>
-                                    <td colspan="4" style="padding:20px;">
-                                        <?php _e(sprintf("To get started, please configure your %sInfusionsoft Settings%s.", '<a href="admin.php?page=gf_settings&addon=Infusionsoft">', "</a>"), "gravity-forms-infusionsoft"); ?>
+                                    <td colspan="3" style="padding:20px;">
+                                        <?php printf( esc_html__("To get started, please configure your %sInfusionsoft Settings%s.", "gravity-forms-infusionsoft"), '<a href="'.esc_url( admin_url('admin.php?page=gf_settings&addon=Infusionsoft') ).'">', "</a>"); ?>
                                     </td>
                                 </tr>
                                 <?php
@@ -558,25 +568,27 @@ EOD;
         $appname = self::get_setting('appname');
 
         if(empty($appname) && empty($key)) {
-            $message = wpautop(sprintf(__('
-            <a href="http://katz.si/inhome"><img alt="Infusionsoft Logo" src="%s" style="display:block; margin:15px 7px 0 0;" width="200" height="33"/></a>
-            <h3>Don\'t have an <a href="http://katz.si/inhome">Infusionsoft</a> account?</h3>
-            This plugin requires an Infusionsoft account. If you have an Infusionsoft account, fill out the settings form below. Otherwise, you should sign up for an Infusionsoft account and start taking advantage of the world\'s best CRM.
 
-            <a href="http://katz.si/indemo" class="button button-primary">Sign up for Infusionsoft Today!</a> <a href="http://katz.si/inhome" class="button button-secondary">Visit Infusionsoft.com</a>
-            ', 'gravity-forms-infusionsoft'), self::get_base_url().'/images/infusion-logo.png'));
+            $message = sprintf( '%s<h3>%s</h3><p>%s</p><p><a href="https://katz.si/indemo" class="button button-primary">%s</a> <a href="https://katz.si/inhome" class="button button-secondary">%s</a></p>',
+		        '<a href="https://katz.si/inhome"><img alt="Infusionsoft Logo" src="' . esc_attr( self::get_base_url().'/images/infusion-logo.png' ) .'" style="display:block; margin:15px 7px 0 0;" width="200" height="33"/></a>',
+		        sprintf( esc_html__('Don\'t have an %sInfusionsoft%s account?', 'gravity-forms-infusionsoft'), '<a href="https://katz.si/inhome">', '</a>' ),
+		        esc_html__('This plugin requires an Infusionsoft account. If you have an Infusionsoft account, fill out the settings form below. Otherwise, you should sign up for an Infusionsoft account and start taking advantage of the world\'s best CRM.', 'gravity-forms-infusionsoft'),
+		        esc_html__('Sign up for Infusionsoft Today!', 'gravity-forms-infusionsoft'),
+		        esc_html__('Visit Infusionsoft.com', 'gravity-forms-infusionsoft')
+            );
+
             $works = false;
             $class = 'updated';
         } else if(empty($appname)) {
 
-            $message = sprintf( __("Your Account Subdomain (also called \"Application Name\") is required. %sEnter it below%s.", 'gravity-forms-infusionsoft'), "<label for='gf_infusionsoft_appname'><a>", "</a></label>" );
+            $message = sprintf( esc_html__("Your Account Subdomain (also called \"Application Name\") is required. %sEnter it below%s.", 'gravity-forms-infusionsoft'), "<label for='gf_infusionsoft_appname'><a>", "</a></label>" );
             $message .= "<span class='howto'>";
-            $message .= sprintf( __("If you access your Infusionsoft account from %sexample123%s.infusionsoft.com%s, your Account Subdomain is %sexample123%s", 'gravity-forms-infusionsoft'), "<span class='code' style='font-style:normal'><strong>", "</strong>", "</span>", "<strong class='code' style='font-style:normal;'>", "</strong>" );
+            $message .= sprintf( esc_attr__("If you access your Infusionsoft account from %sexample123%s.infusionsoft.com%s, your Account Subdomain is %sexample123%s", 'gravity-forms-infusionsoft'), "<span class='code' style='font-style:normal'><strong>", "</strong>", "</span>", "<strong class='code' style='font-style:normal;'>", "</strong>" );
             $message .= "</span>";
 
             $works = false;
         } elseif(empty($key)) {
-            $message = wpautop( sprintf( __('Your API Key is required, please %senter your API key below%s.', 'gravity-forms-infusionsoft'), '<label for="gf_infusionsoft_key"><a>', '</a></label>' ) );
+            $message = wpautop( sprintf( esc_attr__('Your API Key is required, please %senter your API key below%s.', 'gravity-forms-infusionsoft'), '<label for="gf_infusionsoft_key"><a>', '</a></label>' ) );
             $works = false;
         } else {
             self::get_api();
@@ -587,21 +599,21 @@ EOD;
 
                 try {
                     Infusionsoft_WebFormService::getMap($app);
-                    $message .= wpautop(sprintf(__("It works: everything is communicating properly and your settings are correct. Now go %sconfigure form integration with Infusionsoft%s!", "gravity-forms-infusionsoft"), '<a href="'.admin_url('admin.php?page=gf_infusionsoft').'">', '</a>'));
+                    $message .= wpautop(sprintf(esc_attr__("It works: everything is communicating properly and your settings are correct. Now go %sconfigure form integration with Infusionsoft%s!", "gravity-forms-infusionsoft"), '<a href="'.esc_url( admin_url('admin.php?page=gf_infusionsoft') ).'">', '</a>'));
                 }
                 catch(Exception $e){
                     $works = false;
                     if(strpos($e->getMessage(), "[InvalidKey]") !== FALSE){
-                        $message .= wpautop(sprintf(__('Your API Key is not correct, please double check your %sAPI key setting%s.', 'gravity-forms-infusionsoft'), '<label for="gf_infusionsoft_key"><a>', '</a></label>'));
+                        $message .= wpautop(sprintf(esc_attr__('Your API Key is not correct, please double check your %sAPI key setting%s.', 'gravity-forms-infusionsoft'), '<label for="gf_infusionsoft_key"><a>', '</a></label>'));
                     }
                     else{
-                        $message .= wpautop(sprintf(__('Failure to connect: %s', 'gravity-forms-infusionsoft'), $e->error));
+                        $message .= wpautop(sprintf(esc_attr__('Failure to connect: %s', 'gravity-forms-infusionsoft'), $e->error));
                     }
                 }
             }
             else{
                 $works = false;
-                $message .= wpautop(__('Something is wrong. See below for details, check your settings and try again.', 'gravity-forms-infusionsoft'));
+                $message .= wpautop(esc_attr__('Something is wrong. See below for details, check your settings and try again.', 'gravity-forms-infusionsoft'));
             }
 
             $exceptions = Infusionsoft_AppPool::getApp()->getExceptions();
@@ -609,7 +621,7 @@ EOD;
             if(!empty($exceptions)) {
                 $message .= '<ul class="ul-square">';
                 foreach($exceptions as $exception){
-                    $messagetext = str_replace('[', __('Error key: [', 'gravity-forms-infusionsoft'), str_replace(']', ']<br />Error message: ', $exception->getMessage()));
+                    $messagetext = str_replace('[', esc_attr__('Error key: [', 'gravity-forms-infusionsoft'), str_replace(']', ']<br />Error message: ', $exception->getMessage()));
                     $message .= '<li style="list-style:square;">'.$messagetext.'</li>';
                 }
                 $message .= '</ul>';
@@ -657,14 +669,14 @@ EOD;
             #infusionsoft_doubleoptin_warning{padding-left: 5px; padding-bottom:4px; font-size: 10px;}
         </style>
         <script>
-            var form = Array();
+            var form = [];
         </script>
         <div class="wrap">
-            <a href="http://katz.si/inhome"><img alt="<?php _e("Infusionsoft Feeds", "gravity-forms-infusionsoft") ?>" src="<?php echo self::get_base_url()?>/images/infusion-logo.png" style="display:block; margin:15px 7px 0 0;" width="200" height="33"/></a>
-            <h2><?php _e("Infusionsoft Feeds", "gravity-forms-infusionsoft"); ?></h2>
+            <a href="https://katz.si/inhome"><img alt="<?php esc_attr_e("Infusionsoft Feeds", "gravity-forms-infusionsoft") ?>" src="<?php echo self::get_base_url()?>/images/infusion-logo.png" style="display:block; margin:15px 7px 0 0;" width="200" height="33"/></a>
+            <h2><?php esc_html_e("Infusionsoft Feeds", "gravity-forms-infusionsoft"); ?></h2>
             <ul class="subsubsub">
-                <li><a href="<?php echo admin_url('admin.php?page=gf_settings&addon=Infusionsoft'); ?>"><?php _e('Infusionsoft Settings', 'gravity-forms-infusionsoft'); ?></a> |</li>
-                <li><a href="<?php echo admin_url('admin.php?page=gf_infusionsoft'); ?>"><?php _e('Infusionsoft Feeds', 'gravity-forms-infusionsoft'); ?></a></li>
+                <li><a href="<?php echo esc_url( admin_url('admin.php?page=gf_settings&addon=Infusionsoft') ); ?>"><?php esc_html_e('Infusionsoft Settings', 'gravity-forms-infusionsoft'); ?></a> |</li>
+                <li><a href="<?php echo esc_url( admin_url('admin.php?page=gf_infusionsoft') ); ?>"><?php esc_html_e('Infusionsoft Feeds', 'gravity-forms-infusionsoft'); ?></a></li>
             </ul>
         <div class="clear"></div>
         <?php
@@ -675,7 +687,7 @@ EOD;
         //ensures valid credentials were entered in the settings page
         if(($api === false) || is_string($api)) {
             ?>
-            <div class="error" id="message" style="margin-top:20px;"><?php echo wpautop(sprintf(__("We are unable to login to Infusionsoft with the provided username and API key. Please make sure they are valid in the %sSettings Page%s", "gravity-forms-infusionsoft"), "<a href='?page=gf_settings&addon=Infusionsoft'>", "</a>")); ?></div>
+            <div class="error" id="message" style="margin-top:20px;"><?php echo wpautop(sprintf(esc_attr__("We are unable to login to Infusionsoft with the provided username and API key. Please make sure they are valid in the %sSettings Page%s", "gravity-forms-infusionsoft"), "<a href='?page=gf_settings&addon=Infusionsoft'>", "</a>")); ?></div>
             <?php
             return;
         }
@@ -743,14 +755,14 @@ EOD;
             if($is_valid){
                 $id = GFInfusionsoftData::update_feed($id, $config["form_id"], $config["is_active"], $config["meta"]);
                 ?>
-                <div id="message" class="updated fade" style="margin-top:10px;"><p><?php echo sprintf(__("Feed Updated. %sback to list%s", "gravity-forms-infusionsoft"), "<a href='?page=gf_infusionsoft'>", "</a>") ?></p>
+                <div id="message" class="updated fade" style="margin-top:10px;"><p><?php echo sprintf(esc_html__("Feed Updated. %sback to list%s", "gravity-forms-infusionsoft"), "<a href='?page=gf_infusionsoft'>", "</a>") ?></p>
                     <input type="hidden" name="infusionsoft_setting_id" value="<?php echo $id ?>"/>
                 </div>
                 <?php
             }
             else{
                 ?>
-                <div class="error" style="padding:6px"><?php echo __("Feed could not be updated. Please enter all required information below.", "gravity-forms-infusionsoft") ?></div>
+                <div class="error" style="padding:6px"><?php echo esc_html__("Feed could not be updated. Please enter all required information below.", "gravity-forms-infusionsoft") ?></div>
                 <?php
             }
 
@@ -764,23 +776,23 @@ EOD;
 
             <div id="infusionsoft_form_container" valign="top" class="margin_vertical_10">
 
-                <h2><?php _e('1. Select the form to tap into.', "gravity-forms-infusionsoft"); ?></h2>
+                <h2><?php esc_html_e('1. Select the form to tap into.', "gravity-forms-infusionsoft"); ?></h2>
                 <?php
                 $forms = RGFormsModel::get_forms();
 
                 if(isset($config["form_id"])) {
                     foreach($forms as $form) {
                         if($form->id == $config["form_id"]) {
-                            echo '<h3 style="margin:0; padding:0 0 1em 1.75em; font-weight:normal;">'.sprintf(__('(Currently linked with %s)', "gravity-forms-infusionsoft"), $form->title).'</h3>';
+                            echo '<h3 style="margin:0; padding:0 0 1em 1.75em; font-weight:normal;">'.sprintf(esc_html__('(Currently linked with %s)', "gravity-forms-infusionsoft"), $form->title).'</h3>';
                         }
                     }
                 }
 
                 ?>
-                <label for="gf_infusionsoft_form" class="left_header"><?php _e("Gravity Form", "gravity-forms-infusionsoft"); ?> <?php gform_tooltip("infusionsoft_gravity_form") ?></label>
+                <label for="gf_infusionsoft_form" class="left_header"><?php esc_html_e("Gravity Form", "gravity-forms-infusionsoft"); ?> <?php gform_tooltip("infusionsoft_gravity_form") ?></label>
 
-                <select id="gf_infusionsoft_form" name="gf_infusionsoft_form" onchange="SelectForm(jQuery(this).val());">
-                <option value=""><?php _e("Select a form", "gravity-forms-infusionsoft"); ?> </option>
+                <select id="gf_infusionsoft_form" name="gf_infusionsoft_form">
+                <option value=""><?php esc_html_e("Select a form", "gravity-forms-infusionsoft"); ?> </option>
                 <?php
 
                 foreach($forms as $form){
@@ -792,15 +804,15 @@ EOD;
                 ?>
                 </select>
                 &nbsp;&nbsp;
-                <img src="<?php echo GFInfusionsoft::get_base_url() ?>/images/loading.gif" id="infusionsoft_wait" style="display: none;"/>
+                <img src="<?php echo esc_url( GFInfusionsoft::get_base_url() ); ?>/images/loading.gif" id="infusionsoft_wait" style="display: none;"/>
             </div>
 
             <div class="clear"></div>
             <div id="infusionsoft_field_group" valign="top" <?php echo empty($config["form_id"]) ? "style='display:none;'" : "" ?>>
                 <div id="infusionsoft_field_container" valign="top" class="margin_vertical_10" >
-                    <h2><?php _e('2. Map form fields to Infusionsoft fields.', "gravity-forms-infusionsoft"); ?></h2>
-                    <h3 class="description"><?php _e('About field mapping:', "gravity-forms-infusionsoft"); ?></h2>
-                    <label for="infusionsoft_fields" class="left_header"><?php _e("Standard Fields", "gravity-forms-infusionsoft"); ?> <?php gform_tooltip("infusionsoft_map_fields") ?> <span class="howto"><a href="<?php echo add_query_arg(array( 'id'=> $id, 'cache' => 0)); ?>"><?php _e('Refresh Fields &amp; Tags', "gravity-forms-infusionsoft"); ?></a></span></label>
+                    <h2><?php esc_html_e('2. Map form fields to Infusionsoft fields.', "gravity-forms-infusionsoft"); ?></h2>
+                    <h3 class="description"><?php esc_html_e('About field mapping:', "gravity-forms-infusionsoft"); ?></h2>
+                    <label for="infusionsoft_fields" class="left_header"><?php esc_html_e("Standard Fields", "gravity-forms-infusionsoft"); ?> <?php gform_tooltip("infusionsoft_map_fields") ?> <span class="howto"><a href="<?php echo add_query_arg(array( 'id'=> $id, 'cache' => 0)); ?>"><?php esc_html_e('Refresh Fields &amp; Tags', "gravity-forms-infusionsoft"); ?></a></span></label>
                     <div id="infusionsoft_field_list">
                     <?php
 
@@ -829,14 +841,14 @@ EOD;
                 </div>
 
 
-            <div id="infusionsoft_tags_optin_container" valign="top" class="margin_vertical_10">
-                    <label for="infusionsoft_tag_optin" class="left_header"><?php _e("Conditionally Added Tags", "gravity-forms-infusionsoft"); ?> <?php gform_tooltip("infusionsoft_tag_optin_condition") ?></label>
+            <div id="infusionsoft_tags_optin_container" valign="top" class="margin_vertical_10 ginput_container ginput_container_list ginput_list">
+                    <label for="infusionsoft_tag_optin" class="left_header"><?php esc_html_e("Conditionally Added Tags", "gravity-forms-infusionsoft"); ?> <?php gform_tooltip("infusionsoft_tag_optin_condition") ?></label>
                     <div id="infusionsoft_tag_optin">
-                        <table cellpadding="0" cellspacing="0">
+                        <table class="gfield_list gfield_list_container" cellpadding="0" cellspacing="0">
                             <tr>
                                 <td>
                                     <input type="checkbox" id="infusionsoft_tag_optin_enable" name="infusionsoft_tag_optin_enable" value="1" onclick="if(this.checked){jQuery('#infusionsoft_tag_optin_condition_field_container').show('slow'); SetOptin('','', 0); } else{jQuery('#infusionsoft_tag_optin_condition_field_container').hide('slow');}" <?php echo !empty($config["meta"]["tag_optin_enabled"]) ? "checked='checked'" : ""?>/>
-                                    <label for="infusionsoft_tag_optin_enable"><?php _e("Enable", "gravity-forms-infusionsoft"); ?></label>
+                                    <label for="infusionsoft_tag_optin_enable"><?php esc_html_e("Enable", "gravity-forms-infusionsoft"); ?></label>
                                 </td>
                             </tr>
                             <tr>
@@ -855,8 +867,8 @@ EOD;
                                             $disabled_text = "disabled='disabled'";
                                             $tags = self::get_tag_list();
                                             $list = '';
-                                            $add_icon = GFCommon::get_base_url() . "/images/add.png";
-                                            $delete_icon = GFCommon::get_base_url() . "/images/remove.png";
+                                            $add_icon = esc_url( GFCommon::get_base_url() . "/images/add.png" );
+                                            $delete_icon = esc_url( GFCommon::get_base_url() . "/images/remove.png" );
 
                                             foreach($fields as $key => $item) {
                                                     $odd_even = ($rownum % 2) == 0 ? "even" : "odd";
@@ -866,7 +878,7 @@ EOD;
                                                     }
 
                                                     $list .= "
-                                            <tr class='gfield_list_row gfield_list_row_{$odd_even}' id='gfield_list_row_{$key}' data-fieldid='{$key}'>
+                                            <tr class='gfield_list_row gfield_list_row_{$odd_even} gfield_list_group' id='gfield_list_row_{$key}' data-fieldid='{$key}'>
                                                 <td class='gfield_list_cell'>
 
                                                     <div class='infusionsoft_tag_optin_condition_fields infusionsoft_optin_condition_fields'";
@@ -874,19 +886,19 @@ EOD;
                                                         $list .= '>';
 
                                                         #if(!empty($tag_selection_fields)) {
-                                                            $list .= __("<div>If these conditions are met:</div>", "gravity-forms-infusionsoft");
+                                                            $list .= '<div>' . esc_html__("If these conditions are met:", "gravity-forms-infusionsoft") . '</div>';
 
                                                             $list .= '
                                                                 <select id="infusionsoft_tag_optin_field_id_'.$key.'" name="infusionsoft_tag_optin_field_id[]" class="optin_select optin_tag_field_id">'.$tag_selection_fields.'</select>
 
                                                                <select id="infusionsoft_tag_optin_operator_'.$key.'" name="infusionsoft_tag_optin_operator[]" />
-                                                                    <option value="is"'.selected(isset($config["meta"]["tag_optin_operator"][$key]) && $config["meta"]["tag_optin_operator"][$key] == "is", true, false).'>'.__("is", "gravity-forms-infusionsoft") .'</option>
-                                                                    <option value="isnot"'. selected(isset($config["meta"]["tag_optin_operator"][$key]) && $config["meta"]["tag_optin_operator"][$key] == "isnot", true, false).'>'.__("is not", "gravity-forms-infusionsoft") .'</option>
+                                                                    <option value="is"'.selected(isset($config["meta"]["tag_optin_operator"][$key]) && $config["meta"]["tag_optin_operator"][$key] == "is", true, false).'>'.esc_html__("is", "gravity-forms-infusionsoft") .'</option>
+                                                                    <option value="isnot"'. selected(isset($config["meta"]["tag_optin_operator"][$key]) && $config["meta"]["tag_optin_operator"][$key] == "isnot", true, false).'>'.esc_html__("is not", "gravity-forms-infusionsoft") .'</option>
                                                                 </select>
 
                                                                 <select id="infusionsoft_tag_optin_value_'.$key.'" name="infusionsoft_tag_optin_value[]" class="optin_select optin_value"></select>
                                                             ';
-                                                            $list .= '<p>'.__("Assign Entry the following tags: ", "gravity-forms-infusionsoft").'</p>';
+                                                            $list .= '<p>'.esc_html__("Assign Entry the following tags: ", "gravity-forms-infusionsoft").'</p>';
                                                             $list .= self::get_mapped_field_checkbox("[$key]", (!empty($config['meta']['tag_optin_tags'][$key]) ? $config['meta']['tag_optin_tags'][$key] : array()), $tags, 'tag_optin_tags');
                                                       #  }
                                                             $list .= '
@@ -895,9 +907,9 @@ EOD;
                                                         $list .= !empty($tag_selection_fields) ? "style='display:none'" : "";
                                                         $list .= '>';
                                                         if(empty($id)) {
-                                                            $list .= __("Please save the Feed to configure conditional tagging. ", "gravity-forms-infusionsoft");
+                                                            $list .= esc_html__("Please save the Feed to configure conditional tagging. ", "gravity-forms-infusionsoft");
                                                         }
-                                                        $list .= __("To create an Opt-In condition, your form must have a drop down, checkbox or multiple choice field.", "gravity-forms-infusionsoft");
+                                                        $list .= esc_html__("To create an Opt-In condition, your form must have a drop down, checkbox or multiple choice field.", "gravity-forms-infusionsoft");
                                                         $list .= '
                                                         </div>
                                                     </div>
@@ -905,8 +917,8 @@ EOD;
 
                                                 $list .= "
                                                 <td class='gfield_list_icons'>
-                                                    <img src='{$add_icon}' class='add_list_item {$disabled_icon_class}' {$disabled_text} title='" . __("Add a condition", "gravity-forms-infusionsoft") . "' alt='" . __("Add a condition", "gravity-forms-infusionsoft") . "' onclick='KWSFormAddListItem(this, {$maxRow}); GFInfusionsoftUpdateListIDs(this)' style='cursor:pointer; margin:0 3px;' />
-                                                     <img src='{$delete_icon}' {$disabled_text} title='" . __("Remove this condition", "gravity-forms-infusionsoft") . "' alt='" . __("Remove this condition", "gravity-forms-infusionsoft") . "' class='delete_list_item' style='cursor:pointer; {$delete_display}' onclick='gformDeleteListItem(this, {$maxRow});  GFInfusionsoftUpdateListIDs(this)' />
+                                                    <img src='{$add_icon}' class='add_list_item {$disabled_icon_class}' {$disabled_text} title='" . esc_attr__("Add a condition", "gravity-forms-infusionsoft") . "' alt='" . esc_attr__("Add a condition", "gravity-forms-infusionsoft") . "' onclick='KWSFormAddListItem(this, {$maxRow}); GFInfusionsoftUpdateListIDs(this)' style='cursor:pointer; margin:0 3px;' />
+                                                     <img src='{$delete_icon}' {$disabled_text} title='" . esc_attr__("Remove this condition", "gravity-forms-infusionsoft") . "' alt='" . esc_attr__("Remove this condition", "gravity-forms-infusionsoft") . "' class='delete_list_item' style='cursor:pointer; {$delete_display}' onclick='gformDeleteListItem(this, {$maxRow});  GFInfusionsoftUpdateListIDs(this)' />
                                                 </td>";
 
 
@@ -930,32 +942,32 @@ EOD;
                 </div>
 
                 <div id="infusionsoft_optin_container" valign="top" class="margin_vertical_10">
-                    <label for="infusionsoft_optin" class="left_header"><?php _e("Opt-In Condition", "gravity-forms-infusionsoft"); ?> <?php gform_tooltip("infusionsoft_optin_condition") ?></label>
+                    <label for="infusionsoft_optin" class="left_header"><?php esc_html_e("Opt-In Condition", "gravity-forms-infusionsoft"); ?> <?php gform_tooltip("infusionsoft_optin_condition") ?></label>
                     <div id="infusionsoft_optin">
                         <table>
                             <tr>
                                 <td>
                                     <input type="checkbox" id="infusionsoft_optin_enable" name="infusionsoft_optin_enable" value="1" onclick="if(this.checked){jQuery('#infusionsoft_optin_condition_field_container').show('slow'); SetOptinCondition();} else{jQuery('#infusionsoft_optin_condition_field_container').hide('slow');}" <?php echo !empty($config["meta"]["optin_enabled"]) ? "checked='checked'" : ""?>/>
-                                    <label for="infusionsoft_optin_enable"><?php _e("Enable", "gravity-forms-infusionsoft"); ?></label>
+                                    <label for="infusionsoft_optin_enable"><?php esc_html_e("Enable", "gravity-forms-infusionsoft"); ?></label>
                                 </td>
                             </tr>
                             <tr class="gfield_list_row" data-fieldid="optin">
                                 <td>
                                     <div id="infusionsoft_optin_condition_field_container" <?php echo empty($config["meta"]["optin_enabled"]) ? "style='display:none'" : ""?>>
                                         <div class="infusionsoft_optin_condition_fields" <?php echo empty($selection_fields) ? "style='display:none'" : ""?>>
-                                            <?php _e("Export to Infusionsoft if ", "gravity-forms-infusionsoft") ?>
+                                            <?php esc_html_e("Export to Infusionsoft if ", "gravity-forms-infusionsoft") ?>
 
-                                            <select id="infusionsoft_optin_field_id" name="infusionsoft_optin_field_id" class='optin_select' onchange='SetOptinCondition();'><?php echo $selection_fields ?></select>
-                                            <select id="infusionsoft_optin_operator" name="infusionsoft_optin_operator" />
-                                                <option value="is" <?php echo (isset($config["meta"]["optin_operator"]) && $config["meta"]["optin_operator"] == "is") ? "selected='selected'" : "" ?>><?php _e("is", "gravity-forms-infusionsoft") ?></option>
-                                                <option value="isnot" <?php echo (isset($config["meta"]["optin_operator"]) && $config["meta"]["optin_operator"] == "isnot") ? "selected='selected'" : "" ?>><?php _e("is not", "gravity-forms-infusionsoft") ?></option>
+                                            <select id="infusionsoft_optin_field_id" name="infusionsoft_optin_field_id" class='optin_select'><?php echo $selection_fields ?></select>
+                                            <select id="infusionsoft_optin_operator" name="infusionsoft_optin_operator">
+                                                <option value="is" <?php echo (isset($config["meta"]["optin_operator"]) && $config["meta"]["optin_operator"] == "is") ? "selected='selected'" : "" ?>><?php esc_html_e("is", "gravity-forms-infusionsoft") ?></option>
+                                                <option value="isnot" <?php echo (isset($config["meta"]["optin_operator"]) && $config["meta"]["optin_operator"] == "isnot") ? "selected='selected'" : "" ?>><?php esc_html_e("is not", "gravity-forms-infusionsoft") ?></option>
                                             </select>
                                             <select id="infusionsoft_optin_value" name="infusionsoft_optin_value" class='optin_select optin_value'>
                                             </select>
 
                                         </div>
                                         <div class="infusionsoft_optin_condition_message" <?php echo !empty($selection_fields) ? "style='display:none'" : ""?>>
-                                            <?php _e("To create an Opt-In condition, your form must have a drop down, checkbox or multiple choice field.", "gravityform") ?>
+                                            <?php esc_html_e("To create an Opt-In condition, your form must have a drop down, checkbox or multiple choice field.", "gravityform", 'gravity-forms-infusionsoft') ?>
                                         </div>
                                     </div>
                                 </td>
@@ -1010,25 +1022,21 @@ EOD;
                 </div>
 
                 <div id="infusionsoft_submit_container" class="margin_vertical_10">
-                    <input type="submit" name="gf_infusionsoft_submit" value="<?php echo empty($id) ? __("Save Feed", "gravity-forms-infusionsoft") : __("Update Feed", "gravity-forms-infusionsoft"); ?>" class="button-primary"/>
+                    <input type="submit" name="gf_infusionsoft_submit" value="<?php echo empty($id) ? esc_attr__("Save Feed", "gravity-forms-infusionsoft") : esc_attr__("Update Feed", "gravity-forms-infusionsoft"); ?>" class="button-primary"/>
                 </div>
             </div>
         </form>
         </div>
 
 <script>
+
     jQuery(document).ready(function($) {
 
     <?php if(isset($_REQUEST['id'])) { ?>
-        $('#infusionsoft_field_list').live('load', function() {
+        $('#infusionsoft_field_list').on('load', function() {
             $('.infusionsoft_field_cell select').each(function() {
                 var $select = $(this);
-                if($().prop) {
-                    var label = $.trim($('label[for='+$(this).prop('name')+']').text());
-                } else {
-                    var label = $.trim($('label[for='+$(this).attr('name')+']').text());
-                }
-                label = label.replace(' *', '');
+                var label = $.trim($('label[for='+$(this).prop('name')+']').text()).replace(' *', '');
 
                 if($select.val() === '') {
                     $('option', $select).each(function() {
@@ -1045,23 +1053,20 @@ EOD;
             });
         });
     <?php } ?>
+
+        <?php if(empty($config["form_id"])){ ?>
+        SelectForm($('#gf_infusionsoft_form').val());
+        <?php } ?>
+
+        $('body').on('change', '.optin_tag_field_id', function() {
+            var $parent = $(this).parents('tr');
+            var key = $parent.data('fieldid');
+            var value = $(this).val();
+            $("#infusionsoft_tag_optin_value_"+key, $parent).html(GetFieldValues(value, "", 70));
+        }).on('change', '#gf_infusionsoft_form', function() {
+            SelectForm( $(this).val() );
+        }).on('change', '#infusionsoft_optin_field_id', SetOptinCondition );
     });
-        </script>
-        <script>
-
-
-            jQuery(document).ready(function($) {
-                <?php if(empty($config["form_id"])){ ?>
-                SelectForm($('#gf_infusionsoft_form').val());
-                <?php } ?>
-
-                $('body').on('change', '.optin_tag_field_id', function() {
-                    var $parent = $(this).parents('tr');
-                    var key = $parent.data('fieldid');
-                    var value = $(this).val();
-                    $("#infusionsoft_tag_optin_value_"+key, $parent).html(GetFieldValues(value, "", 70));
-                });
-            });
 
             function SelectForm(formId){
 
@@ -1074,14 +1079,13 @@ EOD;
                 jQuery("#infusionsoft_wait").show();
                 jQuery("#infusionsoft_field_group").slideUp();
 
-                var mysack = new sack("<?php echo admin_url('admin-ajax.php'); ?>" );
+                var mysack = new sack("<?php echo esc_js( admin_url('admin-ajax.php') ); ?>" );
                 mysack.execute = 1;
                 mysack.method = 'POST';
                 mysack.setVar( "action", "gf_select_infusionsoft_form" );
                 mysack.setVar( "gf_select_infusionsoft_form", "<?php echo wp_create_nonce("gf_select_infusionsoft_form") ?>" );
                 mysack.setVar( "form_id", formId);
-                mysack.encVar( "cookie", document.cookie, false );
-                mysack.onError = function() {jQuery("#infusionsoft_wait").hide(); alert('<?php _e("Ajax error while selecting a form", "gravity-forms-infusionsoft") ?>' )};
+                mysack.onError = function() {jQuery("#infusionsoft_wait").hide(); alert('<?php echo esc_js( __("Ajax error while selecting a form", "gravity-forms-infusionsoft") ); ?>' )};
                 mysack.runAJAX();
                 return true;
             }
@@ -1457,7 +1461,7 @@ EOD;
         //getting list of all fields for the selected form
         $form_fields = self::get_form_fields($form_id);
 
-        $str = "<table cellpadding='0' cellspacing='0'><thead><tr><th scope='col' class='infusionsoft_col_heading'>" . __("List Fields", "gravity-forms-infusionsoft") . "</th><th scope='col' class='infusionsoft_col_heading'>" . __("Form Fields", "gravity-forms-infusionsoft") . "</th></tr></thead><tbody>";
+        $str = "<table cellpadding='0' cellspacing='0'><thead><tr><th scope='col' class='infusionsoft_col_heading'>" . esc_html__("List Fields", "gravity-forms-infusionsoft") . "</th><th scope='col' class='infusionsoft_col_heading'>" . esc_html__("Form Fields", "gravity-forms-infusionsoft") . "</th></tr></thead><tbody>";
 
 
         foreach($merge_vars as $var){
@@ -1712,7 +1716,7 @@ EOD;
             }
 
             if(self::is_debug()) {
-                echo '<h3>'.__('Admin-only Form Debugging', 'gravity-forms-infusionsoft').'</h3>';
+                echo '<h3>'.esc_html__('Admin-only Form Debugging', 'gravity-forms-infusionsoft').'</h3>';
                 self::r(array(
                         'Form Entry Data' => $entry,
                         #'Form Meta Data' => $form,
@@ -1728,7 +1732,7 @@ EOD;
             self::add_note($entry, $contact_id);
 
        } elseif(current_user_can('administrator')) {
-            echo '<div class="error" id="message">'.wpautop(sprintf(__("The form didn't create a contact because the Infusionsoft Gravity Forms Add-on plugin isn't properly configured. %sCheck the configuration%s and try again.", 'gravity-forms-infusionsoft'), '<a href="'.admin_url('admin.php?page=gf_settings&amp;addon=Infusionsoft').'">', '</a>')).'</div>';
+            echo '<div class="error" id="message">'.wpautop(sprintf(esc_html__("The form didn't create a contact because the Infusionsoft Gravity Forms Add-on plugin isn't properly configured. %sCheck the configuration%s and try again.", 'gravity-forms-infusionsoft'), '<a href="'.esc_url( admin_url('admin.php?page=gf_settings&amp;addon=Infusionsoft') ).'">', '</a>')).'</div>';
 
             self::log_debug( '[Entry ID: '. $entry['id'] . '] '. "API Error: The form didn't create a contact because the Infusionsoft Gravity Forms Add-on plugin isn't properly configured. " );
         }
@@ -1740,7 +1744,7 @@ EOD;
         // Old version
         if(!function_exists('gform_update_meta')) { return; }
 
-        @RGFormsModel::add_note($entry['id'], $current_user->ID, $current_user->display_name, stripslashes(sprintf(__('Added or Updated on Infusionsoft. Contact ID: #%d. View entry at %s', 'gravity-forms-addons'), $contact_id, self::get_contact_url($contact_id))));
+        @RGFormsModel::add_note($entry['id'], $current_user->ID, $current_user->display_name, stripslashes(sprintf(__('Added or Updated on Infusionsoft. Contact ID: #%d. View entry at %s', 'gravity-forms-addons', 'gravity-forms-infusionsoft'), $contact_id, self::get_contact_url($contact_id))));
 
         @gform_update_meta($entry['id'], 'infusionsoft_id', $contact_id);
 
@@ -1806,7 +1810,7 @@ EOD;
 
         $EmailService = new Infusionsoft_EmailService();
 
-        return $EmailService->optIn($email, apply_filters('gravity_forms_infusionsoft_optinsource', sprintf("Gravity Forms Entry #%s (Source: %s)", $entry['id'], $entry['source_url']), $entry));
+        return $EmailService->optIn($email, apply_filters('gravity_forms_infusionsoft_optinsource', sprintf( __("Gravity Forms Entry #%s (Source: %s)", 'gravity-forms-infusionsoft'), $entry['id'], $entry['source_url']), $entry));
     }
 
     public static function is_optin($form, $settings){
